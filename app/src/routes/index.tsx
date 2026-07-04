@@ -8,6 +8,7 @@ import { Nav } from "../components/Nav";
 import { Hero3D } from "../components/Hero3D";
 import { CardDeck } from "../components/CardDeck";
 import { AIStack } from "../components/AIStack";
+import { DeliveryWeek } from "../components/DeliveryWeek";
 import { ProcessSection } from "../components/ProcessSection";
 import { ContactSection } from "../components/ContactSection";
 
@@ -70,6 +71,7 @@ function Index() {
       <Hero3D />
       <CardDeck />
       <AIStack />
+      <DeliveryWeek />
       <ProcessSection />
       <ContactSection />
     </main>

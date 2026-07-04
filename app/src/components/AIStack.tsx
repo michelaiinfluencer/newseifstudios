@@ -29,7 +29,7 @@ export function AIStack() {
   }, []);
 
   return (
-    <section id="stack" className="flex min-h-[70vh] flex-col justify-center px-6 py-28 md:px-14">
+    <section id="stack" className="flex min-h-[80vh] flex-col justify-center px-6 py-44 md:px-14">
       <h2 className="seif-display seif-h2">The AI Stack Behind the Work</h2>
       <p className="mt-3 max-w-xl text-base leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
         We stay at the frontier of AI tooling, constantly evaluating and
