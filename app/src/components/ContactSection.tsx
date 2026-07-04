@@ -4,8 +4,16 @@ import { CONTACT } from "../data/content";
    second-read moment), a huge mono mailto, and the minimal footer bar. */
 export function ContactSection() {
   return (
-    <section id="contact" className="flex flex-col px-6 pt-36 md:px-14">
-      <div className="flex flex-1 flex-col items-center py-20 text-center">
+    <section
+      id="contact"
+      className="relative flex flex-col overflow-hidden px-6 pt-36 md:px-14"
+      style={{
+        backgroundImage: "url(/assets/generated/atmosphere.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center bottom",
+      }}
+    >
+      <div className="relative z-10 flex flex-1 flex-col items-center py-20 text-center">
         <h2
           className="seif-display"
           style={{ fontSize: "clamp(3rem, 10vw, 9rem)", lineHeight: 1 }}
@@ -45,8 +53,18 @@ export function ContactSection() {
         </a>
       </div>
 
+      {/* giant outlined sign-off */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none relative z-10 -mb-4 flex justify-center overflow-hidden"
+      >
+        <span className="seif-watermark" style={{ fontSize: "clamp(4rem, 12.5vw, 12rem)" }}>
+          SEIF STUDIOS
+        </span>
+      </div>
+
       <footer
-        className="flex flex-col items-center justify-between gap-4 py-8 sm:flex-row"
+        className="relative z-10 flex flex-col items-center justify-between gap-4 py-8 sm:flex-row"
         style={{ borderTop: "1px solid var(--seif-gray-700)" }}
       >
         <img

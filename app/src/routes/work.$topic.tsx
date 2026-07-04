@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect } from "react";
 import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
 import { Cursor } from "../components/Cursor";
+import { Ambience } from "../components/Ambience";
 import { Gallery } from "../components/Gallery";
 import { WORK_CHAPTERS, CONTACT } from "../data/content";
 
@@ -30,63 +31,45 @@ function TopicPage() {
 
   useEffect(() => installMotion(), []);
 
-  // arrival: clear any leftover expansion overlay from the card click,
-  // then reveal the header (transform/clip only, fires on mount)
   useEffect(() => {
+    window.scrollTo(0, 0);
+    // clear the card-expansion overlay left by the deck
     document
       .querySelectorAll<HTMLElement>("body > div[style*='z-index: 9000']")
       .forEach((el) => {
-        gsap.to(el, { opacity: 0, duration: 0.5, delay: 0.15, onComplete: () => el.remove() });
+        gsap.to(el, { opacity: 0, duration: 0.5, delay: 0.1, onComplete: () => el.remove() });
       });
     if (prefersReducedMotion()) return;
-    const title = document.querySelector<HTMLElement>("[data-topic-title]");
-    const cover = document.querySelector<HTMLElement>("[data-topic-cover]");
     const tl = gsap.timeline();
-    if (cover) tl.from(cover, { scale: 1.12, duration: 1.1, ease: "power3.out" }, 0);
-    if (title) tl.from(title, { y: 80, duration: 0.9, ease: "power4.out" }, 0.1);
+    const title = document.querySelector("[data-topic-title]");
+    const frame = document.querySelector("[data-topic-frame]");
+    const meta = document.querySelector("[data-topic-meta]");
+    if (title) tl.from(title, { y: 90, duration: 0.9, ease: "power4.out" }, 0.1);
+    if (frame)
+      tl.from(frame, { x: 80, rotationY: -24, duration: 1.1, ease: "power3.out" }, 0.15);
+    if (meta) tl.from(meta, { y: 30, duration: 0.7, ease: "power3.out" }, 0.35);
     return () => {
       tl.kill();
     };
   }, [chapter.id]);
 
-  // scroll to top on topic change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [chapter.id]);
-
   return (
     <main className="seif min-h-dvh">
+      <Ambience />
       <Cursor />
 
-      {/* cover header */}
-      <header className="relative overflow-hidden" style={{ height: "72dvh" }}>
-        <div data-topic-cover className="absolute inset-0">
-          {chapter.coverKind === "video" ? (
-            <video
-              src={chapter.cover}
-              poster={chapter.coverPoster}
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            <img
-              src={chapter.cover}
-              alt={chapter.title}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          )}
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.25) 100%)",
-          }}
-        />
-        <div className="absolute left-0 right-0 top-0 z-10 flex h-16 items-center justify-between px-6 md:px-14">
+      {/* header: split panel, cover uncropped in a floating 3D frame */}
+      <header className="relative overflow-hidden px-6 pt-16 md:px-14" style={{ minHeight: "88dvh" }}>
+        {/* giant stroked chapter number as backdrop */}
+        <span
+          aria-hidden="true"
+          className="seif-watermark pointer-events-none absolute -top-6 right-2 md:right-10"
+          style={{ fontSize: "clamp(9rem, 28vw, 24rem)", WebkitTextStroke: "1px rgba(255,0,0,0.22)" }}
+        >
+          {chapter.num}
+        </span>
+
+        <div className="relative z-10 flex h-14 items-center justify-between">
           <Link to="/" aria-label="Seif Studios home" data-cursor="Back">
             <img
               src="/assets/Logo/LogoSSWhite1.2.png"
@@ -98,25 +81,55 @@ function TopicPage() {
             All Work
           </Link>
         </div>
-        <div className="absolute bottom-10 left-6 right-6 md:left-14 md:right-14">
-          <div style={{ overflow: "hidden" }}>
-            <h1
-              data-topic-title
-              className="seif-display"
-              style={{ fontSize: "clamp(2.4rem, 7vw, 6rem)" }}
-            >
-              <span className="seif-mono mr-4" style={{ color: "var(--seif-red)", fontSize: "0.4em", verticalAlign: "super" }}>
-                {chapter.num}
-              </span>
-              {chapter.title}
-            </h1>
+
+        <div className="relative z-10 mt-8 grid grid-cols-1 items-center gap-12 md:mt-12 md:grid-cols-2">
+          <div>
+            <p className="seif-mono" style={{ color: "var(--seif-red)" }}>
+              {chapter.num} / 07
+            </p>
+            <div style={{ overflow: "hidden" }}>
+              <h1
+                data-topic-title
+                className="seif-display mt-3"
+                style={{ fontSize: "clamp(2.6rem, 5.5vw, 5rem)" }}
+              >
+                {chapter.title}
+              </h1>
+            </div>
+            <div data-topic-meta>
+              <p
+                className="mt-5 max-w-md text-base leading-relaxed"
+                style={{ color: "var(--seif-gray-300)" }}
+              >
+                {chapter.sub}
+              </p>
+              <p className="seif-mono mt-6" style={{ color: "var(--seif-gray-500)" }}>
+                {chapter.pieces.length} pieces
+              </p>
+            </div>
           </div>
-          <p
-            className="mt-4 max-w-xl text-base leading-relaxed"
-            style={{ color: "var(--seif-gray-300)" }}
-          >
-            {chapter.sub}
-          </p>
+
+          <div className="seif-cover-frame mx-auto w-full max-w-md">
+            <div data-topic-frame style={{ aspectRatio: "4/5" }}>
+              {chapter.coverKind === "video" ? (
+                <video
+                  src={chapter.cover}
+                  poster={chapter.coverPoster}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <img
+                  src={chapter.cover}
+                  alt={chapter.title}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </header>
 

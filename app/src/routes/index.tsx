@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
+import { Ambience } from "../components/Ambience";
 import { Nav } from "../components/Nav";
 import { HeroVideo } from "../components/HeroVideo";
 import { CardDeck } from "../components/CardDeck";
@@ -57,6 +58,7 @@ function Index() {
   return (
     <main className="seif min-h-dvh">
       <Loader />
+      <Ambience />
       <Cursor />
       <Nav />
       <HeroVideo />

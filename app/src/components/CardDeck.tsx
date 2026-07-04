@@ -16,30 +16,16 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // gentle pointer tilt (desktop only)
+  // hover starts the cover film (the coverflow rotation owns the transform)
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
-    if (prefersReducedMotion()) return;
     if (window.matchMedia("(hover: none)").matches) return;
-    const rx = gsap.quickTo(card, "rotationX", { duration: 0.6, ease: "power3.out" });
-    const ry = gsap.quickTo(card, "rotationY", { duration: 0.6, ease: "power3.out" });
-    const onMove = (e: PointerEvent) => {
-      const r = card.getBoundingClientRect();
-      ry(((e.clientX - r.left) / r.width - 0.5) * 10);
-      rx((0.5 - (e.clientY - r.top) / r.height) * 8);
-    };
     const onEnter = () => videoRef.current?.play().catch(() => {});
-    const onLeave = () => {
-      rx(0);
-      ry(0);
-      videoRef.current?.pause();
-    };
-    card.addEventListener("pointermove", onMove);
+    const onLeave = () => videoRef.current?.pause();
     card.addEventListener("pointerenter", onEnter);
     card.addEventListener("pointerleave", onLeave);
     return () => {
-      card.removeEventListener("pointermove", onMove);
       card.removeEventListener("pointerenter", onEnter);
       card.removeEventListener("pointerleave", onLeave);
     };
@@ -69,7 +55,7 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
   };
 
   return (
-    <div className="seif-rail-slide" data-rail-slide style={{ perspective: "1100px" }}>
+    <div className="seif-rail-slide" data-rail-slide>
       <div
         ref={cardRef}
         className="seif-card"
@@ -81,7 +67,6 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") open();
         }}
-        style={{ transformStyle: "preserve-3d" }}
       >
         <div className="seif-card-media">
           {ch.coverKind === "video" ? (
@@ -143,6 +128,7 @@ export function CardDeck() {
 
     const setX = gsap.quickSetter(track, "x", "px");
     const slides = Array.from(track.querySelectorAll<HTMLElement>("[data-rail-slide]"));
+    const skewTo = gsap.quickTo(track, "skewX", { duration: 0.5, ease: "power3.out" });
 
     const st = ScrollTrigger.create({
       trigger: outer,
@@ -153,14 +139,22 @@ export function CardDeck() {
       onUpdate: (self) => {
         const x = -self.progress * (N - 1) * step;
         setX(x);
-        // recede non-centered cards
+        // velocity skew: the rail leans into fast scrolls, springs back at rest
+        const v = gsap.utils.clamp(-6, 6, self.getVelocity() / -300);
+        skewTo(v);
+        // 3D coverflow: cards rotate toward the center and sink in Z with
+        // distance; the centered card stands flat, full strength
         const mid = window.innerWidth / 2;
         slides.forEach((s) => {
           const r = s.getBoundingClientRect();
-          const d = Math.min(1, Math.abs(r.left + r.width / 2 - mid) / (step || 1));
+          const signed = (r.left + r.width / 2 - mid) / (step || 1);
+          const d = Math.min(1.6, Math.abs(signed));
           const card = s.firstElementChild as HTMLElement;
-          card.style.scale = String(1 - d * 0.08);
-          card.style.opacity = String(1 - d * 0.4);
+          card.style.transform =
+            `rotateY(${-Math.sign(signed) * Math.min(32, d * 34)}deg)` +
+            ` translateZ(${-d * 190}px)`;
+          card.style.opacity = String(1 - Math.min(0.45, d * 0.32));
+          card.classList.toggle("is-center", d < 0.5);
         });
         const idx = Math.round(self.progress * (N - 1)) + 1;
         if (counterRef.current) {
@@ -186,6 +180,7 @@ export function CardDeck() {
     <section id="work">
       <div ref={outerRef} className="seif-rail-outer">
         <div className="seif-rail-sticky">
+          <div className="seif-rail-glow" aria-hidden="true" />
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
               <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
