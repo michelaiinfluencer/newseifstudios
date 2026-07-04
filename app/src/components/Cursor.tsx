@@ -21,6 +21,8 @@ export function Cursor() {
     const ringY = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power3.out" });
 
     const onMove = (e: PointerEvent) => {
+      dot.classList.add("is-live");
+      ring.classList.add("is-live");
       dotX(e.clientX - 4);
       dotY(e.clientY - 4);
       ringX(e.clientX - ring.offsetWidth / 2);

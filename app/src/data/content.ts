@@ -3,6 +3,7 @@
 
 export type WorkPiece = {
   src: string;
+  ratio: string;
   kind: "image" | "video";
   title: string;
   caption: string;
@@ -36,12 +37,12 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "AI Image Generation",
     sub: "Hyper real product imagery to cinematic fashion editorials: visuals that feel intentional, not artificial.",
     pieces: [
-      { src: `${A}/Image/Images/PortfolioImageImage2.jpg`, kind: "image", title: "First Light", caption: "Studio grade editorial portrait", tag: "Still" },
-      { src: `${A}/Image/Images/PortfolioImageImage1.jpg`, kind: "image", title: "Chromatic Still", caption: "Color forward brand image", tag: "Still" },
-      { src: `${A}/Image/Images/PortfolioImageImage3.jpg`, kind: "image", title: "Atelier", caption: "Fashion editorial concept", tag: "Still" },
-      { src: `${A}/Image/Images/PortfolioImageImage4.jpg`, kind: "image", title: "Nocturne", caption: "Low key cinematic scene", tag: "Still" },
-      { src: `${A}/Image/Images/PortfolioImageImage5.jpg`, kind: "image", title: "Silhouette Study", caption: "Form and light", tag: "Still" },
-      { src: `${A}/Image/Images/PortfolioImageImage6.jpg`, kind: "image", title: "Grain and Glass", caption: "Textured product still", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage2.jpg`, ratio: "3392/5056", kind: "image", title: "First Light", caption: "Studio grade editorial portrait", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage1.jpg`, ratio: "3072/5504", kind: "image", title: "Chromatic Still", caption: "Color forward brand image", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage3.jpg`, ratio: "3584/4800", kind: "image", title: "Atelier", caption: "Fashion editorial concept", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage4.jpg`, ratio: "3584/4800", kind: "image", title: "Nocturne", caption: "Low key cinematic scene", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage5.jpg`, ratio: "3584/4800", kind: "image", title: "Silhouette Study", caption: "Form and light", tag: "Still" },
+      { src: `${A}/Image/Images/PortfolioImageImage6.jpg`, ratio: "3072/5504", kind: "image", title: "Grain and Glass", caption: "Textured product still", tag: "Still" },
     ],
   },
   {
@@ -49,12 +50,12 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "AI Video and Animation",
     sub: "Short and long format AI video. Motion that feels cinematic and brand aligned, from social 9:16 to widescreen 16:9.",
     pieces: [
-      { src: `${A}/Video/Videos/PortfoliVideoVideo1.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo1.jpg`, kind: "video", title: "Pulse", caption: "Social first motion", tag: "9:16" },
-      { src: `${A}/Video/Videos/PortfoliVideoVideo2.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo2.jpg`, kind: "video", title: "Bloom", caption: "Creative motion study", tag: "9:16" },
-      { src: `${A}/Video/Videos/PortfoliVideoVideo3.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo3.jpg`, kind: "video", title: "Signal", caption: "Brand essence loop", tag: "9:16" },
-      { src: `${A}/Video/Videos/PortfoliVideoVideo4.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo4.jpg`, kind: "video", title: "Wide Open", caption: "Cinematic art film", tag: "16:9" },
-      { src: `${A}/Video/Videos/PortfoliVideoVideo5.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo5.jpg`, kind: "video", title: "Momentum", caption: "Brand motion", tag: "16:9" },
-      { src: `${A}/Video/Videos/PortfoliVideoVideo6.mp4`, poster: `${A}/Video/Videos/PortfoliVideoVideo6.jpg`, kind: "video", title: "Afterimage", caption: "Digital echo", tag: "16:9" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo1.mp4`, ratio: "800/1434", poster: `${A}/Video/Videos/PortfoliVideoVideo1.jpg`, kind: "video", title: "Pulse", caption: "Social first motion", tag: "9:16" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo2.mp4`, ratio: "800/1002", poster: `${A}/Video/Videos/PortfoliVideoVideo2.jpg`, kind: "video", title: "Bloom", caption: "Creative motion study", tag: "9:16" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo3.mp4`, ratio: "800/1420", poster: `${A}/Video/Videos/PortfoliVideoVideo3.jpg`, kind: "video", title: "Signal", caption: "Brand essence loop", tag: "9:16" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo4.mp4`, ratio: "800/338", poster: `${A}/Video/Videos/PortfoliVideoVideo4.jpg`, kind: "video", title: "Wide Open", caption: "Cinematic art film", tag: "16:9" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo5.mp4`, ratio: "800/338", poster: `${A}/Video/Videos/PortfoliVideoVideo5.jpg`, kind: "video", title: "Momentum", caption: "Brand motion", tag: "16:9" },
+      { src: `${A}/Video/Videos/PortfoliVideoVideo6.mp4`, ratio: "800/338", poster: `${A}/Video/Videos/PortfoliVideoVideo6.jpg`, kind: "video", title: "Afterimage", caption: "Digital echo", tag: "16:9" },
     ],
   },
   {
@@ -62,12 +63,12 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "Custom AI Models",
     sub: "Private models fine tuned to your brand: a consistent digital face, a virtual ambassador, an aesthetic system that belongs to you.",
     pieces: [
-      { src: `${A}/Image/Models/PortfolioModelImage1.jpg`, kind: "image", title: "Muse", caption: "Trained brand face", tag: "Still" },
-      { src: `${A}/Image/Models/PortfolioModelImage2.jpg`, kind: "image", title: "Cipher", caption: "Consistent identity", tag: "Still" },
-      { src: `${A}/Image/Models/PortfolioModelImage3.jpg`, kind: "image", title: "Icon", caption: "Signature look", tag: "Still" },
-      { src: `${A}/Image/Models/PortfolioModelImage4.jpg`, kind: "image", title: "Double", caption: "Virtual ambassador", tag: "Still" },
-      { src: `${A}/Image/Models/PortfolioModelImage5.jpg`, kind: "image", title: "Continuum", caption: "Controlled aesthetic system", tag: "Still" },
-      { src: `${A}/Image/Models/PortfolioModelImage6.jpg`, kind: "image", title: "Likeness", caption: "Owned model output", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage1.jpg`, ratio: "2048/2730", kind: "image", title: "Muse", caption: "Trained brand face", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage2.jpg`, ratio: "2048/2730", kind: "image", title: "Cipher", caption: "Consistent identity", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage3.jpg`, ratio: "2048/2730", kind: "image", title: "Icon", caption: "Signature look", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage4.jpg`, ratio: "2048/2730", kind: "image", title: "Double", caption: "Virtual ambassador", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage5.jpg`, ratio: "2048/2730", kind: "image", title: "Continuum", caption: "Controlled aesthetic system", tag: "Still" },
+      { src: `${A}/Image/Models/PortfolioModelImage6.jpg`, ratio: "2048/2730", kind: "image", title: "Likeness", caption: "Owned model output", tag: "Still" },
     ],
   },
   {
@@ -75,9 +76,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "Product Placement",
     sub: "Your product at the center of high conversion AI environments: studio, lifestyle, luxury, street.",
     pieces: [
-      { src: `${A}/Image/Products/PortfolioProductImage7.jpg`, kind: "image", title: "Hero Shot", caption: "Studio product feature", tag: "Still" },
-      { src: `${A}/Image/Products/PortfolioProductImage8.jpg`, kind: "image", title: "On Location", caption: "Lifestyle placement", tag: "Still" },
-      { src: `${A}/Image/Products/PortfolioProductImage4.jpg`, kind: "image", title: "Center Stage", caption: "Campaign ready render", tag: "Still" },
+      { src: `${A}/Image/Products/PortfolioProductImage7.jpg`, ratio: "768/1376", kind: "image", title: "Hero Shot", caption: "Studio product feature", tag: "Still" },
+      { src: `${A}/Image/Products/PortfolioProductImage8.jpg`, ratio: "2806/4988", kind: "image", title: "On Location", caption: "Lifestyle placement", tag: "Still" },
+      { src: `${A}/Image/Products/PortfolioProductImage4.jpg`, ratio: "3328/4992", kind: "image", title: "Center Stage", caption: "Campaign ready render", tag: "Still" },
     ],
   },
   {
@@ -85,12 +86,12 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "Lookbooks and Campaigns",
     sub: "Complete visual storytelling systems: full lookbooks, seasonal campaigns, launch visuals, multi platform content.",
     pieces: [
-      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage3.jpg`, kind: "image", title: "Season One", caption: "Lookbook key visual", tag: "Still" },
-      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage5.jpg`, kind: "image", title: "Capsule", caption: "Campaign still", tag: "Still" },
-      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage1.jpg`, kind: "image", title: "Campaign Key", caption: "Launch visual", tag: "Still" },
-      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo1.mp4`, poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo1.jpg`, kind: "video", title: "Lookbook Reel", caption: "Seasonal motion", tag: "9:16" },
-      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo4.mp4`, poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo4.jpg`, kind: "video", title: "The Drop", caption: "Launch teaser", tag: "9:16" },
-      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo3.mp4`, poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo3.jpg`, kind: "video", title: "Editorial Motion", caption: "Campaign cutdown", tag: "9:16" },
+      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage3.jpg`, ratio: "3072/5504", kind: "image", title: "Season One", caption: "Lookbook key visual", tag: "Still" },
+      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage5.jpg`, ratio: "3712/4608", kind: "image", title: "Capsule", caption: "Campaign still", tag: "Still" },
+      { src: `${A}/Image/Lookbooks/PortfolioLookbookImage1.jpg`, ratio: "3392/5056", kind: "image", title: "Campaign Key", caption: "Launch visual", tag: "Still" },
+      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo1.mp4`, ratio: "800/1422", poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo1.jpg`, kind: "video", title: "Lookbook Reel", caption: "Seasonal motion", tag: "9:16" },
+      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo4.mp4`, ratio: "800/1070", poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo4.jpg`, kind: "video", title: "The Drop", caption: "Launch teaser", tag: "9:16" },
+      { src: `${A}/Video/Lookbooks/PortfolioLookbookVideo3.mp4`, ratio: "800/1422", poster: `${A}/Video/Lookbooks/PortfolioLookbookVideo3.jpg`, kind: "video", title: "Editorial Motion", caption: "Campaign cutdown", tag: "9:16" },
     ],
   },
   {
@@ -98,12 +99,12 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "AI Avatar",
     sub: "Realistic, stylized, or futuristic avatars that carry your brand personality across social, marketing, and virtual experiences.",
     pieces: [
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage1.jpg`, kind: "image", title: "Neon Self", caption: "Stylized digital identity", tag: "Still" },
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage2.jpg`, kind: "image", title: "Digital Twin", caption: "Realistic avatar", tag: "Still" },
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage3.jpg`, kind: "image", title: "Alter", caption: "Brand persona", tag: "Still" },
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage4.jpg`, kind: "image", title: "Hologram", caption: "Futuristic identity", tag: "Still" },
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage5.jpg`, kind: "image", title: "Synthetic", caption: "Virtual ambassador", tag: "Still" },
-      { src: `${A}/Image/Avatars/PortfolioAvatarImage6.jpg`, kind: "image", title: "Second Skin", caption: "Digital influencer", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage1.jpg`, ratio: "3584/4800", kind: "image", title: "Neon Self", caption: "Stylized digital identity", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage2.jpg`, ratio: "3584/4800", kind: "image", title: "Digital Twin", caption: "Realistic avatar", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage3.jpg`, ratio: "3072/5504", kind: "image", title: "Alter", caption: "Brand persona", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage4.jpg`, ratio: "3584/4800", kind: "image", title: "Hologram", caption: "Futuristic identity", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage5.jpg`, ratio: "3392/5056", kind: "image", title: "Synthetic", caption: "Virtual ambassador", tag: "Still" },
+      { src: `${A}/Image/Avatars/PortfolioAvatarImage6.jpg`, ratio: "1725/2310", kind: "image", title: "Second Skin", caption: "Digital influencer", tag: "Still" },
     ],
   },
   {
@@ -111,9 +112,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
     title: "UGC",
     sub: "AI generated user content that feels native to TikTok and Instagram: realistic, engaging, built to convert.",
     pieces: [
-      { src: `${A}/Image/UGC/ImageUGC1.jpg`, kind: "image", title: "Unboxed", caption: "Native product moment", tag: "Still" },
-      { src: `${A}/Image/UGC/ImageUGC3.jpg`, kind: "image", title: "In Hand", caption: "Authentic use shot", tag: "Still" },
-      { src: `${A}/Image/UGC/ImageUGC2.jpg`, kind: "image", title: "Real Talk", caption: "Creator style content", tag: "Still" },
+      { src: `${A}/Image/UGC/ImageUGC1.jpg`, ratio: "1650/2048", kind: "image", title: "Unboxed", caption: "Native product moment", tag: "Still" },
+      { src: `${A}/Image/UGC/ImageUGC3.jpg`, ratio: "1091/1441", kind: "image", title: "In Hand", caption: "Authentic use shot", tag: "Still" },
+      { src: `${A}/Image/UGC/ImageUGC2.jpg`, ratio: "941/1672", kind: "image", title: "Real Talk", caption: "Creator style content", tag: "Still" },
     ],
   },
 ];

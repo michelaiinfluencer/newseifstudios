@@ -49,6 +49,7 @@ function Tile({
       <div
         ref={tileRef}
         className="seif-tile"
+        style={{ aspectRatio: piece.ratio }}
         data-cursor="view"
         onPointerEnter={enter}
         onPointerMove={(e) => distort.current?.move(e.clientX, e.clientY)}

@@ -298,7 +298,8 @@
 .seif-tile video {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .seif-tile:hover img,
@@ -318,6 +319,11 @@
   z-index: 9999;
   border-radius: 50%;
   will-change: transform;
+  visibility: hidden; /* shown on first pointermove */
+}
+.seif-cursor-dot.is-live,
+.seif-cursor-ring.is-live {
+  visibility: visible;
 }
 .seif-cursor-dot {
   width: 8px;

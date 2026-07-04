@@ -10,7 +10,7 @@ import { Marquee } from "./Marquee";
 
 const FRAME_COUNT = 100;
 const framePath = (i: number) =>
-  `/frames/hero/f-${String(i + 1).padStart(3, "0")}.webp`;
+  `/frames/hero/f-${String(i + 1).padStart(3, "0")}.jpg`;
 
 export function HeroScrub() {
   const wrapRef = useRef<HTMLDivElement>(null);
