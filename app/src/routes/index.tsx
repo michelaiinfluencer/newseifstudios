@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import SplitType from "split-type";
 import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
@@ -19,20 +18,27 @@ function Index() {
   // Lenis + GSAP bridge (client-only side effect)
   useEffect(() => installMotion(), []);
 
-  // hero headline build: fires ON MOUNT (not viewport-gated), transform-only
+  // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.
+  // Hand-rolled word split (no split-type: its UMD build breaks worker SSR).
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const h1 = document.querySelector<HTMLElement>("h1.seif-display");
-    if (!h1) return;
-    const split = new SplitType(h1, { types: "words" });
-    split.words?.forEach((w) => {
+    if (!h1 || h1.dataset.split === "1") return;
+    h1.dataset.split = "1";
+    const original = h1.textContent ?? "";
+    h1.textContent = "";
+    const words: HTMLElement[] = [];
+    original.split(" ").forEach((word, i, arr) => {
       const wrap = document.createElement("span");
       wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:top;";
-      w.parentNode?.insertBefore(wrap, w);
-      wrap.appendChild(w);
-      w.style.display = "inline-block";
+      const inner = document.createElement("span");
+      inner.style.display = "inline-block";
+      inner.textContent = word + (i < arr.length - 1 ? " " : "");
+      wrap.appendChild(inner);
+      h1.appendChild(wrap);
+      words.push(inner);
     });
-    const tween = gsap.from(split.words, {
+    const tween = gsap.from(words, {
       yPercent: 110,
       duration: 1.0,
       ease: "power4.out",
@@ -41,7 +47,8 @@ function Index() {
     });
     return () => {
       tween.kill();
-      split.revert();
+      h1.textContent = original;
+      delete h1.dataset.split;
     };
   }, []);
 
