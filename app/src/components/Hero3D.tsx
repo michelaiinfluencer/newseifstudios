@@ -39,7 +39,7 @@ export function Hero3D() {
     // the type walks off stage left while the film takes over
     tl.to(text, { xPercent: -130, ease: "power2.in", duration: 0.5 }, 0);
     // the film grows toward full screen...
-    tl.to(film, { scale: 2.05, ease: "power1.inOut", duration: 0.72 }, 0);
+    tl.to(film, { scale: 1.75, ease: "power1.inOut", duration: 0.72 }, 0);
     // ...and at its peak dissolves like fog
     tl.to(film, { opacity: 0, filter: "blur(26px)", ease: "power1.in", duration: 0.28 }, 0.72);
 
@@ -104,7 +104,7 @@ export function Hero3D() {
             <div
               ref={filmRef}
               className="seif-hero-window"
-              style={{ width: "min(34vh, 320px)", willChange: "transform, opacity" }}
+              style={{ width: "min(46vw, 640px)", willChange: "transform, opacity" }}
             >
               <div className="seif-hero-window-bar">
                 <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
@@ -112,11 +112,11 @@ export function Hero3D() {
                 </span>
                 <span className="seif-hero-window-dot" />
               </div>
-              <div style={{ position: "relative", aspectRatio: "9/16" }}>
+              <div style={{ position: "relative", aspectRatio: "16/9" }}>
                 <video
                   ref={videoRef}
-                  src="/assets/Video/Main/morfing1.mp4"
-                  poster="/assets/Video/Main/morfing1.jpg"
+                  src="/assets/Video/Main/morfing.mp4"
+                  poster="/assets/Video/Main/morfing.jpg"
                   muted
                   loop
                   playsInline

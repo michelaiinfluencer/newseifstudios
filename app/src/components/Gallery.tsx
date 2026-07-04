@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "../lib/motion";
 import type { WorkPiece } from "../data/content";
 
-/* V8 topic gallery: four drifting columns of small tiles. Images are
-   uniform 3:4 crops; videos keep their true 9:16 / 16:9 format. Hover is a
-   gentle zoom (CSS), click opens the fullscreen lightbox with prev/next
-   arrows, counter, and arrow-key navigation. */
+/* V9 gallery: one aligned grid, every tile the same 3:4 crop (videos
+   included, center-cropped), rows perfectly level. Hover is a gentle zoom;
+   click opens the fullscreen lightbox (original format preserved there)
+   with prev/next arrows, counter, and arrow keys. */
 
 function Tile({
   piece,
@@ -37,10 +37,7 @@ function Tile({
     <div className="seif-gtile" data-gtile>
       <div
         className="seif-tile"
-        style={{
-          aspectRatio: piece.kind === "image" ? "3/4" : piece.ratio,
-          borderRadius: 12,
-        }}
+        style={{ aspectRatio: "3/4", borderRadius: 12 }}
         data-cursor="View"
         onClick={() => onOpen(piece)}
         role="button"
@@ -88,14 +85,6 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
-  // split into 4 columns round-robin so columns can drift independently
-  const cols: WorkPiece[][] = [[], [], [], []];
-  const idxMap: number[][] = [[], [], [], []];
-  pieces.forEach((p, i) => {
-    cols[i % 4].push(p);
-    idxMap[i % 4].push(i);
-  });
-
   // tile entrances + per-column scroll drift (transform only)
   useEffect(() => {
     if (prefersReducedMotion()) return;
@@ -111,16 +100,8 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
         scrollTrigger: { trigger: t, start: "top 96%" },
       }),
     );
-    const columns = Array.from(root.querySelectorAll<HTMLElement>("[data-gcol]"));
-    const drifts = columns.map((c, i) =>
-      gsap.to(c, {
-        y: i % 2 === 1 ? -40 : -10,
-        ease: "none",
-        scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.7 },
-      }),
-    );
     return () => {
-      [...rises, ...drifts].forEach((t) => {
+      rises.forEach((t) => {
         t.scrollTrigger?.kill();
         t.kill();
       });
@@ -161,12 +142,8 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
   return (
     <>
       <div ref={rootRef} className="grid grid-cols-2 gap-5 lg:grid-cols-4">
-        {cols.map((col, c) => (
-          <div key={c} data-gcol className="flex flex-col gap-5" style={{ marginTop: c % 2 === 1 ? 44 : 0 }}>
-            {col.map((p, i) => (
-              <Tile key={p.src} piece={p} index={idxMap[c][i]} onOpen={() => setOpenIdx(idxMap[c][i])} />
-            ))}
-          </div>
+        {pieces.map((p, i) => (
+          <Tile key={p.src} piece={p} index={i} onOpen={() => setOpenIdx(i)} />
         ))}
       </div>
 

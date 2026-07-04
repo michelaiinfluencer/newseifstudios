@@ -28,7 +28,7 @@ export function Loader() {
     });
     tl.to(counter, {
       v: 100,
-      duration: 1.1,
+      duration: 2.0,
       ease: "power2.inOut",
       onUpdate: () => {
         num.textContent = String(Math.round(counter.v)).padStart(3, "0");

@@ -44,7 +44,7 @@ function Index() {
       duration: 1.0,
       ease: "power4.out",
       stagger: 0.07,
-      delay: 1.5,
+      delay: 2.4,
     });
     return () => {
       tween.kill();

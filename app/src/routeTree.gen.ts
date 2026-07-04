@@ -9,12 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkRouteImport } from './routes/work'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WorkTopicRouteImport } from './routes/work.$topic'
 
+const WorkRoute = WorkRouteImport.update({
+  id: '/work',
+  path: '/work',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -35,25 +40,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkTopicRoute = WorkTopicRouteImport.update({
-  id: '/work/$topic',
-  path: '/work/$topic',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/play': typeof PlayRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/work/$topic': typeof WorkTopicRoute
+  '/work': typeof WorkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/play': typeof PlayRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/work/$topic': typeof WorkTopicRoute
+  '/work': typeof WorkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,20 +61,14 @@ export interface FileRoutesById {
   '/play': typeof PlayRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/work/$topic': typeof WorkTopicRoute
+  '/work': typeof WorkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/play' | '/robots.txt' | '/sitemap.xml' | '/work/$topic'
+  fullPaths: '/' | '/play' | '/robots.txt' | '/sitemap.xml' | '/work'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/play' | '/robots.txt' | '/sitemap.xml' | '/work/$topic'
-  id:
-    | '__root__'
-    | '/'
-    | '/play'
-    | '/robots.txt'
-    | '/sitemap.xml'
-    | '/work/$topic'
+  to: '/' | '/play' | '/robots.txt' | '/sitemap.xml' | '/work'
+  id: '__root__' | '/' | '/play' | '/robots.txt' | '/sitemap.xml' | '/work'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -82,11 +76,18 @@ export interface RootRouteChildren {
   PlayRoute: typeof PlayRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  WorkTopicRoute: typeof WorkTopicRoute
+  WorkRoute: typeof WorkRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/work': {
+      id: '/work'
+      path: '/work'
+      fullPath: '/work'
+      preLoaderRoute: typeof WorkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -115,13 +116,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/work/$topic': {
-      id: '/work/$topic'
-      path: '/work/$topic'
-      fullPath: '/work/$topic'
-      preLoaderRoute: typeof WorkTopicRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -130,7 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayRoute: PlayRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  WorkTopicRoute: WorkTopicRoute,
+  WorkRoute: WorkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -33,7 +33,7 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
 
   const open = () => {
     const card = cardRef.current;
-    const go = () => navigate({ to: "/work/$topic", params: { topic: ch.id } });
+    const go = () => navigate({ to: "/work", hash: ch.id });
     if (!card || prefersReducedMotion()) return go();
     const r = card.getBoundingClientRect();
     const overlay = document.createElement("div");
@@ -43,23 +43,19 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     overlay.appendChild(img);
     document.body.appendChild(overlay);
-    // destination: the topic page's cover slot in the top right
-    const vw = window.innerWidth;
-    const pad = vw >= 768 ? 56 : 24;
-    const targetW = Math.min(vw * 0.24, 340);
-    const targetH = (targetW * 4) / 3 / 1; // 3:4 slot
     gsap
       .timeline()
-      .to(overlay, { scale: 1.06, duration: 0.18, ease: "power2.out" })
+      .to(overlay, { scale: 1.07, duration: 0.16, ease: "power2.out" })
       .to(overlay, {
-        scale: 1,
-        left: vw - pad - targetW,
-        top: 96,
-        width: targetW,
-        height: targetH,
-        duration: 0.55,
-        ease: "power3.inOut",
-        onComplete: go,
+        opacity: 0,
+        filter: "blur(14px)",
+        scale: 1.16,
+        duration: 0.34,
+        ease: "power2.in",
+        onComplete: () => {
+          overlay.remove();
+          go();
+        },
       });
   };
 
