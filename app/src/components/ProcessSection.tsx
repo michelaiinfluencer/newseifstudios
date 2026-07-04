@@ -32,6 +32,8 @@ export function ProcessSection() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
+    // anchor every card to the exact stage center; slots offset from there
+    gsap.set(cards, { left: "50%", top: "50%", xPercent: -50, yPercent: -50 });
     gsap.set(cards[0], { x: SLOTS[0].x * vw, y: SLOTS[0].y * vh });
 
     const tl = gsap.timeline({
@@ -53,8 +55,8 @@ export function ProcessSection() {
       const slot = SLOTS[i + 1];
       tl.fromTo(
         card,
-        { x: vw * 0.85, y: vh * 0.45 },
-        { x: slot.x * vw, y: slot.y * vh, duration: 1, ease: "power2.out" },
+        { x: vw * 0.85, y: vh * 0.45, xPercent: -50, yPercent: -50 },
+        { x: slot.x * vw, y: slot.y * vh, xPercent: -50, yPercent: -50, duration: 1, ease: "power2.out" },
       );
     });
 
