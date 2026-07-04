@@ -33,13 +33,17 @@ export function Hero3D() {
     const film = filmRef.current;
     if (!wrap || !text || !film) return;
 
+    // how far the window's center is from the viewport center right now
+    const r = film.getBoundingClientRect();
+    const dx = window.innerWidth / 2 - (r.left + r.width / 2);
+
     const tl = gsap.timeline({
       scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.45 },
     });
     // the type walks off stage left while the film takes over
     tl.to(text, { xPercent: -130, ease: "power2.in", duration: 0.5 }, 0);
-    // the film grows toward full screen...
-    tl.to(film, { scale: 1.9, xPercent: -8, ease: "power1.inOut", duration: 0.72 }, 0);
+    // the film glides INTO the center of the screen while zooming near fullscreen...
+    tl.to(film, { x: dx, scale: 1.68, ease: "power1.inOut", duration: 0.72 }, 0);
     // ...and at its peak dissolves like fog
     tl.to(film, { opacity: 0, filter: "blur(26px)", ease: "power1.in", duration: 0.28 }, 0.72);
 
@@ -100,11 +104,11 @@ export function Hero3D() {
             </div>
           </div>
 
-          <div className="flex justify-end md:col-span-6 lg:col-span-7">
+          <div className="flex justify-center md:col-span-6 lg:col-span-7">
             <div
               ref={filmRef}
               className="seif-hero-window"
-              style={{ width: "min(54vw, 860px)", willChange: "transform, opacity" }}
+              style={{ width: "min(60vw, 960px)", willChange: "transform, opacity" }}
             >
               <div className="seif-hero-window-bar">
                 <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>

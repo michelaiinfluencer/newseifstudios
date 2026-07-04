@@ -317,7 +317,7 @@
 
 /* carousel rail */
 .seif-rail-outer {
-  height: 560vh; /* 100vh stage + ~76vh of travel per remaining card */
+  height: 440vh; /* the section releases right as card 07 reaches the anchor */
   position: relative;
 }
 .seif-rail-sticky {
@@ -624,7 +624,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.05) 45%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 26%);
 }
 .seif-card-glare {
   --gx: 50;

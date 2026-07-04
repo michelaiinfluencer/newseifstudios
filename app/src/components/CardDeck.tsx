@@ -146,14 +146,12 @@ export function CardDeck() {
       onUpdate: (self) => {
         const x = -self.progress * (N - 1) * step;
         setX(x);
-        // flat rail: distance from the left focal card dims and gently shrinks
+        // flat rail, full brightness: only a whisper of scale marks the focal card
         slides.forEach((s) => {
           const r = s.getBoundingClientRect();
           const d = Math.min(1.4, Math.abs(r.left + r.width / 2 - focal) / (step || 1));
           const card = s.firstElementChild as HTMLElement;
-          card.style.transform = `scale(${1 - Math.min(0.05, d * 0.04)})`;
-          // edge shading: cards darken as they near the screen sides
-          card.style.filter = `brightness(${1 - Math.min(0.45, d * 0.32)})`;
+          card.style.transform = `scale(${1 - Math.min(0.04, d * 0.03)})`;
           card.classList.toggle("is-center", d < 0.5);
         });
         const idx = Math.round(self.progress * (N - 1)) + 1;
@@ -180,7 +178,6 @@ export function CardDeck() {
     <section id="work">
       <div ref={outerRef} className="seif-rail-outer">
         <div className="seif-rail-sticky">
-          <div className="seif-rail-glow" aria-hidden="true" />
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
               <h2 className="seif-display seif-h2">
