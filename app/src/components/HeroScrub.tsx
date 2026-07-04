@@ -160,13 +160,13 @@ export function HeroScrub() {
           }}
           aria-hidden="true"
         />
-        {/* readability scrim over the lower third */}
+        {/* readability scrims: lower third for the headline, top band for the nav */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 34%, rgba(0,0,0,0) 55%)",
+              "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 34%, rgba(0,0,0,0) 55%), linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 12%)",
           }}
           aria-hidden="true"
         />

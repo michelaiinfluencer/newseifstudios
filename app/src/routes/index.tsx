@@ -28,10 +28,14 @@ function Index() {
     const words: HTMLElement[] = [];
     original.split(" ").forEach((word, i, arr) => {
       const wrap = document.createElement("span");
-      wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:top;";
+      // trailing whitespace collapses inside inline-blocks, so word gaps
+      // are real margins instead of spaces
+      wrap.style.cssText =
+        "display:inline-block;overflow:hidden;vertical-align:top;" +
+        (i < arr.length - 1 ? "margin-right:0.24em;" : "");
       const inner = document.createElement("span");
       inner.style.display = "inline-block";
-      inner.textContent = word + (i < arr.length - 1 ? " " : "");
+      inner.textContent = word;
       wrap.appendChild(inner);
       h1.appendChild(wrap);
       words.push(inner);
