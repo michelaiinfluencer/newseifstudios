@@ -8,6 +8,13 @@ import Lenis from "lenis";
 let installed = false;
 let lenis: Lenis | null = null;
 
+// Register at module load (guarded): child effects (HeroScrub, sections)
+// run BEFORE the root's installMotion effect, and an unregistered
+// ScrollTrigger.create crashes at runtime.
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export function prefersReducedMotion(): boolean {
   return (
     typeof window !== "undefined" &&
@@ -18,7 +25,6 @@ export function prefersReducedMotion(): boolean {
 export function installMotion(): () => void {
   if (installed || typeof window === "undefined") return () => {};
   installed = true;
-  gsap.registerPlugin(ScrollTrigger);
 
   if (prefersReducedMotion()) {
     return () => {
