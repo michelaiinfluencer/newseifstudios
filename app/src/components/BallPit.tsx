@@ -254,7 +254,7 @@ export function BallPit() {
 
   return (
     <section ref={hostRef} className="mx-auto w-full max-w-5xl px-6 pt-16">
-      <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+      <h2 className="seif-display seif-h2">
         Have a Play
       </h2>
       <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>

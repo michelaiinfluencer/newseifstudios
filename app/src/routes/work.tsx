@@ -54,9 +54,7 @@ function WorkPage() {
             style={{ height: 52, width: "auto" }}
           />
         </Link>
-        <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
-          The Work, 01 to 07
-        </span>
+
       </header>
 
       {WORK_CHAPTERS.map((ch, i) => (
@@ -69,7 +67,7 @@ function WorkPage() {
           <p className="seif-mono" style={{ color: "var(--seif-red)" }}>
             {ch.num} / 07
           </p>
-          <h2 className="seif-display mt-2" style={{ fontSize: "clamp(2rem, 4.4vw, 3.8rem)" }}>
+          <h2 className="seif-display seif-h2 mt-2">
             {ch.title}
           </h2>
           <p

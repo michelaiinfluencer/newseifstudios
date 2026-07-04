@@ -13,27 +13,46 @@ export function ProcessSection() {
   const flowRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
 
+  const stackRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const root = flowRef.current;
     if (!root) return;
 
-    // step cards rise in one after another
+    // AI stack: 01 arrives from the right, then 02 settles next to it, and on
+    let stackTween: gsap.core.Tween | null = null;
+    if (stackRef.current) {
+      const items = stackRef.current.querySelectorAll("[data-stack-item]");
+      stackTween = gsap.from(items, {
+        x: 110,
+        opacity: 0.15,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.14,
+        scrollTrigger: { trigger: stackRef.current, start: "top 86%" },
+      });
+    }
+
+    // step cards drift in alternating from the sides, fading up to full
     const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-step-card]"));
-    const cardTweens = cards.map((c) =>
+    const cardTweens = cards.map((c, i) =>
       gsap.from(c, {
-        y: 60,
-        duration: 0.9,
+        x: i % 2 === 0 ? -90 : 90,
+        y: 40,
+        opacity: 0.15,
+        duration: 1,
         ease: "power3.out",
         scrollTrigger: { trigger: c, start: "top 92%" },
       }),
     );
 
-    // workflow entries slide in from the right as you scroll
+    // workflow entries fade in from the right along the drawing line
     const items = Array.from(root.querySelectorAll<HTMLElement>("[data-flow-item]"));
     const itemTweens = items.map((it) =>
       gsap.from(it, {
         x: 70,
+        opacity: 0.15,
         duration: 0.8,
         ease: "power3.out",
         scrollTrigger: { trigger: it, start: "top 90%" },
@@ -64,6 +83,8 @@ export function ProcessSection() {
         t.scrollTrigger?.kill();
         t.kill();
       });
+      stackTween?.scrollTrigger?.kill();
+      stackTween?.kill();
       lineTween?.scrollTrigger?.kill();
       lineTween?.kill();
     };
@@ -72,18 +93,19 @@ export function ProcessSection() {
   return (
     <section id="process" className="px-6 pt-28 md:px-14">
       {/* 1 · the AI stack, now leading */}
-      <div className="pb-24">
-        <h2 className="seif-display" style={{ fontSize: "clamp(1.8rem, 3.6vw, 3rem)" }}>
+      <div className="pb-40">
+        <h2 className="seif-display seif-h2">
           The AI Stack Behind the Work
         </h2>
         <p className="mt-3 max-w-xl text-base leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
           We stay at the frontier of AI tooling, constantly evaluating and
           integrating the best platforms available.
         </p>
-        <div className="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
+        <div ref={stackRef} className="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-5" style={{ overflow: "hidden" }}>
           {AI_STACK.map((t, i) => (
             <div
               key={t.name}
+              data-stack-item
               className="group"
               style={{ borderTop: "2px solid var(--seif-white)", paddingTop: "1rem" }}
             >
@@ -107,8 +129,8 @@ export function ProcessSection() {
       </div>
 
       {/* 2 · how we work: steps left, workflow right */}
-      <div style={{ borderTop: "1px solid var(--seif-gray-700)" }} className="pt-20">
-        <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.8rem)" }}>
+      <div style={{ borderTop: "1px solid var(--seif-gray-700)" }} className="pt-28">
+        <h2 className="seif-display seif-h2">
           How We Turn Ideas Into Visuals
         </h2>
         <p className="mt-3 max-w-xl text-base leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>

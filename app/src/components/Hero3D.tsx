@@ -39,7 +39,7 @@ export function Hero3D() {
     // the type walks off stage left while the film takes over
     tl.to(text, { xPercent: -130, ease: "power2.in", duration: 0.5 }, 0);
     // the film grows toward full screen...
-    tl.to(film, { scale: 1.75, ease: "power1.inOut", duration: 0.72 }, 0);
+    tl.to(film, { scale: 1.9, xPercent: -8, ease: "power1.inOut", duration: 0.72 }, 0);
     // ...and at its peak dissolves like fog
     tl.to(film, { opacity: 0, filter: "blur(26px)", ease: "power1.in", duration: 0.28 }, 0.72);
 
@@ -62,7 +62,7 @@ export function Hero3D() {
         }}
       >
         <div className="grid flex-1 grid-cols-1 items-center gap-8 px-6 pt-24 md:grid-cols-12 md:px-14 md:pt-14">
-          <div ref={textRef} className="md:col-span-6 lg:col-span-6" style={{ zIndex: 2 }}>
+          <div ref={textRef} className="md:col-span-6 md:pl-10 lg:col-span-5 lg:pl-24" style={{ zIndex: 2 }}>
             <p className="seif-eyebrow">
               Creative AI Studio for Brands, Products and Visual Storytelling
             </p>
@@ -100,11 +100,11 @@ export function Hero3D() {
             </div>
           </div>
 
-          <div className="flex justify-center md:col-span-6 lg:col-span-6">
+          <div className="flex justify-end md:col-span-6 lg:col-span-7">
             <div
               ref={filmRef}
               className="seif-hero-window"
-              style={{ width: "min(46vw, 640px)", willChange: "transform, opacity" }}
+              style={{ width: "min(54vw, 860px)", willChange: "transform, opacity" }}
             >
               <div className="seif-hero-window-bar">
                 <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>

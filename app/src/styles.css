@@ -662,13 +662,15 @@
   right: 22px;
   bottom: 18px;
   pointer-events: none;
+  color: #ffffff; /* always over the photo's dark gradient */
 }
+.seif-card-meta h3 { color: #ffffff; }
 .seif-card-count {
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
   margin-top: 0.5rem;
-  color: var(--seif-gray-300);
+  color: rgba(255, 255, 255, 0.82);
 }
 .seif-card:hover .seif-card-count { color: var(--seif-red); }
 @media (prefers-reduced-motion: reduce) {
@@ -699,8 +701,8 @@
 /* floating back-to-studio button (the big gallery page) */
 .seif-back-float {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 28px;
+  top: 24px;
   z-index: 900;
   display: inline-flex;
   align-items: center;
@@ -716,3 +718,6 @@
 }
 .seif-back-float:hover { background: var(--seif-red-hover); transform: translateY(-2px); }
 .seif-back-float:active { transform: scale(0.97); }
+
+/* one size for every section title, matched to "How We Turn Ideas..." */
+.seif-h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); }

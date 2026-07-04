@@ -121,14 +121,16 @@ export function CardDeck() {
     if (!outer || !track) return;
 
     let step = 0;
+    let focal = 0;
     const measure = () => {
       const slides = track.querySelectorAll<HTMLElement>("[data-rail-slide]");
       if (slides.length < 2) return;
       step = slides[1].offsetLeft - slides[0].offsetLeft;
-      // center the first card
+      // anchor the first card toward the LEFT with a little breathing room
       const first = slides[0];
-      const lead = window.innerWidth / 2 - first.offsetWidth / 2;
+      const lead = Math.max(28, window.innerWidth * 0.06);
       track.style.paddingLeft = `${lead}px`;
+      focal = lead + first.offsetWidth / 2;
     };
     measure();
 
@@ -144,11 +146,10 @@ export function CardDeck() {
       onUpdate: (self) => {
         const x = -self.progress * (N - 1) * step;
         setX(x);
-        // flat rail: distance from center only dims and gently shrinks
-        const mid = window.innerWidth / 2;
+        // flat rail: distance from the left focal card dims and gently shrinks
         slides.forEach((s) => {
           const r = s.getBoundingClientRect();
-          const d = Math.min(1.4, Math.abs(r.left + r.width / 2 - mid) / (step || 1));
+          const d = Math.min(1.4, Math.abs(r.left + r.width / 2 - focal) / (step || 1));
           const card = s.firstElementChild as HTMLElement;
           card.style.transform = `scale(${1 - Math.min(0.05, d * 0.04)})`;
           // edge shading: cards darken as they near the screen sides
@@ -182,7 +183,7 @@ export function CardDeck() {
           <div className="seif-rail-glow" aria-hidden="true" />
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
-              <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+              <h2 className="seif-display seif-h2">
                 Seven Ways We Create
               </h2>
               <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>
