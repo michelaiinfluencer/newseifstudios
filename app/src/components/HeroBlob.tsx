@@ -108,7 +108,7 @@ export function HeroBlob() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const gl = canvas.getContext("webgl", { alpha: true, antialias: true });
-    if (!gl) return;
+    if (!gl) return; // the CSS glow fallback below stays visible
 
     const compile = (type: number, src: string) => {
       const s = gl.createShader(type)!;
@@ -120,8 +120,9 @@ export function HeroBlob() {
     gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
     gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return; // fallback stays
     gl.useProgram(prog);
+    canvas.style.opacity = "1"; // shader is live: reveal the canvas
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -214,11 +215,33 @@ export function HeroBlob() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: "100%", height: "100%", display: "block" }}
-      aria-label="Interactive red liquid sculpture"
-      role="img"
-    />
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {/* no-WebGL fallback: a breathing red orb glow */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: "8%",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle at 38% 34%, rgba(255,80,80,0.85), rgba(230,0,0,0.55) 42%, rgba(70,0,0,0.35) 68%, transparent 74%)",
+          filter: "blur(2px)",
+        }}
+      />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          display: "block",
+          opacity: 0, // revealed once a WebGL context succeeds
+          background: "#000",
+        }}
+        aria-label="Interactive red liquid sculpture"
+        role="img"
+      />
+    </div>
   );
 }
