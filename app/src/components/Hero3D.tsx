@@ -53,7 +53,7 @@ export function Hero3D() {
 
         <div
           className="md:col-span-6 lg:col-span-7"
-          style={{ height: "min(74vh, 100%)", minHeight: 320 }}
+          style={{ height: "min(72vh, 680px)", minHeight: 340 }}
         >
           <HeroBlob />
         </div>
