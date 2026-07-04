@@ -1,122 +1,77 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { gsap, prefersReducedMotion } from "../lib/motion";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
 import { WORK_CHAPTERS, type WorkChapter } from "../data/content";
 
-/* V2 centerpiece: the 3D card deck. One card per discipline.
-   Layers ride at different translateZ depths inside a perspective container;
-   the card tilts toward the pointer, a glare tracks it, a red rim ignites.
-   Click = the card's cover expands to fullscreen, then we travel into
-   /work/$topic. Touch devices: tap navigates with a quick wipe. */
+/* V3: the disciplines are a ONE-LINE carousel. The section pins (sticky, no
+   pin-spacer) and vertical scroll drives the rail: each next card slides in
+   from the right and settles in the center, with snap per card. The centered
+   card is full strength, neighbors recede slightly. Click travels into the
+   card's gallery. Touch devices get a native swipe rail instead. */
+
+const N = WORK_CHAPTERS.length;
 
 function Card({ ch, index }: { ch: WorkChapter; index: number }) {
   const navigate = useNavigate();
-  const shellRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const glareRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // gentle pointer tilt (desktop only)
   useEffect(() => {
-    const shell = shellRef.current;
-    const inner = innerRef.current;
-    const glare = glareRef.current;
-    if (!shell || !inner || !glare) return;
+    const card = cardRef.current;
+    if (!card) return;
     if (prefersReducedMotion()) return;
     if (window.matchMedia("(hover: none)").matches) return;
-
-    const rx = gsap.quickTo(inner, "rotationX", { duration: 0.6, ease: "power3.out" });
-    const ry = gsap.quickTo(inner, "rotationY", { duration: 0.6, ease: "power3.out" });
-    const gx = gsap.quickTo(glare, "--gx", { duration: 0.4, ease: "power2.out" });
-    const gy = gsap.quickTo(glare, "--gy", { duration: 0.4, ease: "power2.out" });
-
+    const rx = gsap.quickTo(card, "rotationX", { duration: 0.6, ease: "power3.out" });
+    const ry = gsap.quickTo(card, "rotationY", { duration: 0.6, ease: "power3.out" });
     const onMove = (e: PointerEvent) => {
-      const r = shell.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      ry((px - 0.5) * 14);
-      rx((0.5 - py) * 12);
-      gx(px * 100);
-      gy(py * 100);
+      const r = card.getBoundingClientRect();
+      ry(((e.clientX - r.left) / r.width - 0.5) * 10);
+      rx((0.5 - (e.clientY - r.top) / r.height) * 8);
     };
-    const onEnter = () => {
-      videoRef.current?.play().catch(() => {});
-    };
+    const onEnter = () => videoRef.current?.play().catch(() => {});
     const onLeave = () => {
       rx(0);
       ry(0);
       videoRef.current?.pause();
     };
-    shell.addEventListener("pointermove", onMove);
-    shell.addEventListener("pointerenter", onEnter);
-    shell.addEventListener("pointerleave", onLeave);
+    card.addEventListener("pointermove", onMove);
+    card.addEventListener("pointerenter", onEnter);
+    card.addEventListener("pointerleave", onLeave);
     return () => {
-      shell.removeEventListener("pointermove", onMove);
-      shell.removeEventListener("pointerenter", onEnter);
-      shell.removeEventListener("pointerleave", onLeave);
+      card.removeEventListener("pointermove", onMove);
+      card.removeEventListener("pointerenter", onEnter);
+      card.removeEventListener("pointerleave", onLeave);
     };
   }, []);
 
-  // scroll drift: each card floats up at its own rate (transform only)
-  useEffect(() => {
-    const shell = shellRef.current;
-    if (!shell || prefersReducedMotion()) return;
-    const drift = index % 2 === 0 ? 40 : -34;
-    const tween = gsap.fromTo(
-      shell,
-      { y: drift },
-      {
-        y: -drift,
-        ease: "none",
-        scrollTrigger: { trigger: shell, start: "top bottom", end: "bottom top", scrub: 0.8 },
-      },
-    );
-    return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
-    };
-  }, [index]);
-
   const open = () => {
-    const shell = shellRef.current;
+    const card = cardRef.current;
     const go = () => navigate({ to: "/work/$topic", params: { topic: ch.id } });
-    if (!shell || prefersReducedMotion()) return go();
-
-    // expansion: clone the cover into a fixed overlay and scale it to fullscreen
-    const r = shell.getBoundingClientRect();
+    if (!card || prefersReducedMotion()) return go();
+    const r = card.getBoundingClientRect();
     const overlay = document.createElement("div");
     overlay.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:9000;overflow:hidden;background:#000;`;
     const img = document.createElement("img");
     img.src = ch.coverKind === "video" ? (ch.coverPoster ?? ch.cover) : ch.cover;
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     overlay.appendChild(img);
-    const shade = document.createElement("div");
-    shade.style.cssText = "position:absolute;inset:0;background:rgba(0,0,0,0);";
-    overlay.appendChild(shade);
     document.body.appendChild(overlay);
-
-    gsap.timeline({ onComplete: go })
-      .to(overlay, {
-        left: 0,
-        top: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        duration: 0.65,
-        ease: "power3.inOut",
-      })
-      .to(shade, { backgroundColor: "rgba(0,0,0,0.45)", duration: 0.3 }, "<0.3");
-    // the topic page removes leftover overlays on mount
+    gsap.to(overlay, {
+      left: 0,
+      top: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      duration: 0.6,
+      ease: "power3.inOut",
+      onComplete: go,
+    });
   };
 
-  const wide = ch.num === "01" || ch.num === "04" || ch.num === "07";
-
   return (
-    <div
-      ref={shellRef}
-      className={wide ? "md:col-span-7" : "md:col-span-5"}
-      style={{ perspective: "1200px" }}
-    >
+    <div className="seif-rail-slide" data-rail-slide style={{ perspective: "1100px" }}>
       <div
-        ref={innerRef}
+        ref={cardRef}
         className="seif-card"
         data-cursor="Open"
         role="link"
@@ -128,7 +83,7 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
         }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        <div className="seif-card-media" style={{ transform: "translateZ(0px)" }}>
+        <div className="seif-card-media">
           {ch.coverKind === "video" ? (
             <video
               ref={videoRef}
@@ -140,15 +95,13 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
               preload="none"
             />
           ) : (
-            <img src={ch.cover} alt={ch.title} loading={index < 2 ? "eager" : "lazy"} />
+            <img src={ch.cover} alt={ch.title} loading={index < 3 ? "eager" : "lazy"} />
           )}
-          <div ref={glareRef} className="seif-card-glare" />
+          <div className="seif-card-glare" />
         </div>
-        <span className="seif-card-num" style={{ transform: "translateZ(70px)" }}>
-          {ch.num}
-        </span>
-        <div className="seif-card-meta" style={{ transform: "translateZ(50px)" }}>
-          <h3 className="seif-display" style={{ fontSize: "clamp(1.4rem, 2.6vw, 2.2rem)" }}>
+        <span className="seif-card-num">{ch.num}</span>
+        <div className="seif-card-meta">
+          <h3 className="seif-display" style={{ fontSize: "clamp(1.3rem, 2.2vw, 1.9rem)" }}>
             {ch.title}
           </h3>
           <p className="seif-card-count seif-mono">
@@ -164,24 +117,106 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
 }
 
 export function CardDeck() {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    if (window.matchMedia("(hover: none)").matches) return; // touch: native swipe
+    const outer = outerRef.current;
+    const track = trackRef.current;
+    if (!outer || !track) return;
+
+    let step = 0;
+    const measure = () => {
+      const slides = track.querySelectorAll<HTMLElement>("[data-rail-slide]");
+      if (slides.length < 2) return;
+      step = slides[1].offsetLeft - slides[0].offsetLeft;
+      // center the first card
+      const first = slides[0];
+      const lead = window.innerWidth / 2 - first.offsetWidth / 2;
+      track.style.paddingLeft = `${lead}px`;
+    };
+    measure();
+
+    const setX = gsap.quickSetter(track, "x", "px");
+    const slides = Array.from(track.querySelectorAll<HTMLElement>("[data-rail-slide]"));
+
+    const st = ScrollTrigger.create({
+      trigger: outer,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.5,
+      snap: { snapTo: 1 / (N - 1), duration: 0.35, ease: "power2.out" },
+      onUpdate: (self) => {
+        const x = -self.progress * (N - 1) * step;
+        setX(x);
+        // recede non-centered cards
+        const mid = window.innerWidth / 2;
+        slides.forEach((s) => {
+          const r = s.getBoundingClientRect();
+          const d = Math.min(1, Math.abs(r.left + r.width / 2 - mid) / (step || 1));
+          const card = s.firstElementChild as HTMLElement;
+          card.style.scale = String(1 - d * 0.08);
+          card.style.opacity = String(1 - d * 0.4);
+        });
+        const idx = Math.round(self.progress * (N - 1)) + 1;
+        if (counterRef.current) {
+          counterRef.current.textContent = `0${idx} / 0${N}`;
+        }
+        if (barRef.current) {
+          barRef.current.style.transform = `scaleX(${self.progress})`;
+        }
+      },
+    });
+    const onResize = () => {
+      measure();
+      st.refresh();
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      st.kill();
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
   return (
-    <section id="work" className="px-6 py-32 md:px-14">
-      <h2
-        className="seif-display"
-        style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", maxWidth: "12ch" }}
-      >
-        Seven Ways We Create
-      </h2>
-      <p
-        className="mt-4 max-w-md text-base leading-relaxed"
-        style={{ color: "var(--seif-gray-300)" }}
-      >
-        Pick a discipline and step inside its gallery.
-      </p>
-      <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-20 md:grid-cols-12">
-        {WORK_CHAPTERS.map((ch, i) => (
-          <Card key={ch.id} ch={ch} index={i} />
-        ))}
+    <section id="work">
+      <div ref={outerRef} className="seif-rail-outer">
+        <div className="seif-rail-sticky">
+          <div className="flex items-end justify-between px-6 pt-24 md:px-14">
+            <div>
+              <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+                Seven Ways We Create
+              </h2>
+              <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>
+                Scroll through the disciplines. Open one to enter its gallery.
+              </p>
+            </div>
+            <div className="hidden text-right md:block">
+              <span ref={counterRef} className="seif-mono" style={{ color: "var(--seif-gray-300)" }}>
+                01 / 0{N}
+              </span>
+              <div
+                className="mt-2 h-px w-40 origin-left"
+                style={{ background: "var(--seif-gray-700)" }}
+              >
+                <div
+                  ref={barRef}
+                  className="h-px origin-left"
+                  style={{ background: "var(--seif-red)", transform: "scaleX(0)" }}
+                />
+              </div>
+            </div>
+          </div>
+          <div ref={trackRef} className="seif-rail-track">
+            {WORK_CHAPTERS.map((ch, i) => (
+              <Card key={ch.id} ch={ch} index={i} />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

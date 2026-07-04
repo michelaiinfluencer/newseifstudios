@@ -32,7 +32,7 @@ export function Nav() {
         type="button"
         onClick={() => scrollToTarget("#top")}
         aria-label="Seif Studios, back to top"
-        data-magnetic
+
       >
         <img
           src="/assets/Logo/LogoSSWhite1.2.png"

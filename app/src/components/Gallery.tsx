@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { prefersReducedMotion } from "../lib/motion";
-import { HoverDistort } from "../lib/hover-distort";
 import type { WorkPiece } from "../data/content";
 
-/* Topic gallery: masonry of media tiles with the shared WebGL ripple on
-   image hover, view-managed video playback, and a lightbox. */
+/* Topic gallery: masonry of media tiles, view-managed video playback, and a
+   lightbox. Hover never alters the artwork; a red hairline frame (CSS) is
+   the only response. */
 
 function Tile({
   piece,
-  distort,
   onOpen,
 }: {
   piece: WorkPiece;
-  distort: React.MutableRefObject<HoverDistort | null>;
   onOpen: (p: WorkPiece) => void;
 }) {
   const tileRef = useRef<HTMLDivElement>(null);
@@ -33,16 +30,6 @@ function Tile({
     return () => io.disconnect();
   }, [piece.kind]);
 
-  const enter = (e: React.PointerEvent) => {
-    if (piece.kind !== "image") return;
-    const tile = tileRef.current;
-    const img = mediaRef.current as HTMLImageElement | null;
-    if (tile && img && distort.current) {
-      distort.current.enter(tile, img);
-      distort.current.move(e.clientX, e.clientY);
-    }
-  };
-
   return (
     <div className="mb-5 break-inside-avoid" style={{ pageBreakInside: "avoid" }}>
       <div
@@ -50,9 +37,6 @@ function Tile({
         className="seif-tile"
         style={{ aspectRatio: piece.ratio }}
         data-cursor="View"
-        onPointerEnter={enter}
-        onPointerMove={(e) => distort.current?.move(e.clientX, e.clientY)}
-        onPointerLeave={() => distort.current?.leave()}
         onClick={() => onOpen(piece)}
         role="button"
         tabIndex={0}
@@ -96,18 +80,7 @@ function Tile({
 }
 
 export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
-  const distort = useRef<HoverDistort | null>(null);
   const [open, setOpen] = useState<WorkPiece | null>(null);
-
-  useEffect(() => {
-    if (prefersReducedMotion()) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-    distort.current = new HoverDistort();
-    return () => {
-      distort.current?.destroy();
-      distort.current = null;
-    };
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -122,7 +95,7 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
     <>
       <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
         {pieces.map((p) => (
-          <Tile key={p.src} piece={p} distort={distort} onOpen={setOpen} />
+          <Tile key={p.src} piece={p} onOpen={setOpen} />
         ))}
       </div>
 

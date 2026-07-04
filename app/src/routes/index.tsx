@@ -4,7 +4,7 @@ import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Nav } from "../components/Nav";
-import { HeroScrub } from "../components/HeroScrub";
+import { HeroVideo } from "../components/HeroVideo";
 import { CardDeck } from "../components/CardDeck";
 import { ProcessSection } from "../components/ProcessSection";
 import { ContactSection } from "../components/ContactSection";
@@ -59,7 +59,7 @@ function Index() {
       <Loader />
       <Cursor />
       <Nav />
-      <HeroScrub />
+      <HeroVideo />
       <CardDeck />
       <ProcessSection />
       <ContactSection />

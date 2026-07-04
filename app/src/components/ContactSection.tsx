@@ -27,7 +27,7 @@ export function ContactSection() {
         <a
           href={`mailto:${CONTACT.email}`}
           className="seif-mailto mt-6"
-          data-magnetic
+
         >
           {CONTACT.email}
         </a>

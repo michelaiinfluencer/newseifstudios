@@ -30,7 +30,16 @@ export function ProcessSection() {
   }, []);
 
   return (
-    <section id="process" ref={rootRef} className="px-6 py-28 md:px-14">
+    <section
+      id="process"
+      ref={rootRef}
+      className="px-6 py-28 md:px-14"
+      style={{
+        backgroundImage: "url(/assets/generated/texture-streaks.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.8rem)" }}>
         How We Turn Ideas Into Visuals
       </h2>
@@ -140,7 +149,7 @@ export function ProcessSection() {
         <h3 className="seif-display" style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)" }}>
           Ready to Start a Project?
         </h3>
-        <button type="button" className="seif-btn-frame" data-magnetic onClick={() => scrollToTarget("#contact")}>
+        <button type="button" className="seif-btn-frame" onClick={() => scrollToTarget("#contact")}>
           Contact Us
         </button>
       </div>
