@@ -100,7 +100,7 @@ function WorkPage() {
         className="seif-back-float"
         data-cursor="Home"
         aria-label="Back to the studio"
-        onClick={() => navigate({ to: "/" })}
+        onClick={() => navigate({ to: "/", hash: "work" })}
       >
         <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" strokeWidth="1.6" />

@@ -43,7 +43,7 @@ export function Hero3D() {
     // the type walks off stage left while the film takes over
     tl.to(text, { xPercent: -130, ease: "power2.in", duration: 0.5 }, 0);
     // the film glides INTO the center of the screen while zooming near fullscreen...
-    tl.to(film, { x: dx, scale: 1.68, ease: "power1.inOut", duration: 0.72 }, 0);
+    tl.to(film, { x: dx, scale: 2.3, ease: "power1.inOut", duration: 0.72 }, 0);
     // ...and at its peak dissolves like fog
     tl.to(film, { opacity: 0, filter: "blur(26px)", ease: "power1.in", duration: 0.28 }, 0.72);
 
@@ -108,7 +108,7 @@ export function Hero3D() {
             <div
               ref={filmRef}
               className="seif-hero-window"
-              style={{ width: "min(60vw, 960px)", willChange: "transform, opacity" }}
+              style={{ width: "min(66vw, 1400px)", willChange: "transform, opacity" }}
             >
               <div className="seif-hero-window-bar">
                 <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>

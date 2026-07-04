@@ -122,6 +122,7 @@ export function CardDeck() {
 
     let step = 0;
     let focal = 0;
+    let travel = 0;
     const measure = () => {
       const slides = track.querySelectorAll<HTMLElement>("[data-rail-slide]");
       if (slides.length < 2) return;
@@ -131,6 +132,11 @@ export function CardDeck() {
       const lead = Math.max(28, window.innerWidth * 0.06);
       track.style.paddingLeft = `${lead}px`;
       focal = lead + first.offsetWidth / 2;
+      // stop as soon as the LAST card is fully on screen (plus a margin),
+      // never dragging it all the way to the left anchor
+      const last = slides[slides.length - 1];
+      const lastRight = lead + last.offsetLeft + last.offsetWidth;
+      travel = Math.max(0, lastRight - window.innerWidth + lead);
     };
     measure();
 
@@ -144,7 +150,7 @@ export function CardDeck() {
       end: "bottom bottom",
       scrub: 0.3,
       onUpdate: (self) => {
-        const x = -self.progress * (N - 1) * step;
+        const x = -self.progress * travel;
         setX(x);
         // flat rail, full brightness: only a whisper of scale marks the focal card
         slides.forEach((s) => {
