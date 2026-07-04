@@ -15,6 +15,11 @@ export type WorkChapter = {
   id: string;
   title: string;
   sub: string;
+  /** card deck cover */
+  cover: string;
+  coverKind: "image" | "video";
+  coverPoster?: string;
+  num: string;
   pieces: WorkPiece[];
 };
 
@@ -34,6 +39,9 @@ export const MARQUEE_ITEMS = [
 export const WORK_CHAPTERS: WorkChapter[] = [
   {
     id: "images",
+    num: "01",
+    cover: `${A}/Image/Images/PortfolioImageImage2.jpg`,
+    coverKind: "image",
     title: "AI Image Generation",
     sub: "Hyper real product imagery to cinematic fashion editorials: visuals that feel intentional, not artificial.",
     pieces: [
@@ -47,6 +55,10 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "video",
+    num: "02",
+    cover: `${A}/Video/Videos/PortfoliVideoVideo3.mp4`,
+    coverKind: "video",
+    coverPoster: `${A}/Video/Videos/PortfoliVideoVideo3.jpg`,
     title: "AI Video and Animation",
     sub: "Short and long format AI video. Motion that feels cinematic and brand aligned, from social 9:16 to widescreen 16:9.",
     pieces: [
@@ -60,6 +72,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "models",
+    num: "03",
+    cover: `${A}/Image/Models/PortfolioModelImage1.jpg`,
+    coverKind: "image",
     title: "Custom AI Models",
     sub: "Private models fine tuned to your brand: a consistent digital face, a virtual ambassador, an aesthetic system that belongs to you.",
     pieces: [
@@ -73,6 +88,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "product",
+    num: "04",
+    cover: `${A}/Image/Products/PortfolioProductImage7.jpg`,
+    coverKind: "image",
     title: "Product Placement",
     sub: "Your product at the center of high conversion AI environments: studio, lifestyle, luxury, street.",
     pieces: [
@@ -83,6 +101,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "lookbooks",
+    num: "05",
+    cover: `${A}/Image/Lookbooks/PortfolioLookbookImage3.jpg`,
+    coverKind: "image",
     title: "Lookbooks and Campaigns",
     sub: "Complete visual storytelling systems: full lookbooks, seasonal campaigns, launch visuals, multi platform content.",
     pieces: [
@@ -96,6 +117,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "avatars",
+    num: "06",
+    cover: `${A}/Image/Avatars/PortfolioAvatarImage1.jpg`,
+    coverKind: "image",
     title: "AI Avatar",
     sub: "Realistic, stylized, or futuristic avatars that carry your brand personality across social, marketing, and virtual experiences.",
     pieces: [
@@ -109,6 +133,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   },
   {
     id: "ugc",
+    num: "07",
+    cover: `${A}/Image/UGC/ImageUGC1.jpg`,
+    coverKind: "image",
     title: "UGC",
     sub: "AI generated user content that feels native to TikTok and Instagram: realistic, engaging, built to convert.",
     pieces: [

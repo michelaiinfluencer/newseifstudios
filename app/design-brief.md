@@ -1,5 +1,24 @@
 # Design brief — Seif Studios (seifstudios.com)
 
+## V2 REVISION (user feedback, supersedes conflicting v1 lines)
+User verdict on v1: too flat, too stacked, hero film too low-res, cursor wrong.
+- **Architecture:** the page is no longer one long dump. Landing = hero film +
+  a **3D card deck** (one card per discipline). Clicking a card plays an
+  expansion animation and travels INTO the card: route `/work/$topic` opens
+  that discipline's gallery. Process + contact stay on landing, condensed.
+- **Cards (new Tier-1 companion):** perspective-tilt 3D cards with layered
+  depth (cover media, oversized number, title riding above the surface),
+  pointer-tracked glare, red rim-light on hover, scroll drift. The deck IS the
+  navigation.
+- **Hero film:** regenerated at 4K (seedance std, high bitrate), frames
+  extracted at 1920w. New, more cinematic serpentine ribbon composition with
+  left negative space for type.
+- **Cursor v2:** the dot+ring pair is gone. One small blend-difference dot
+  that springs after the pointer and swells into a red "Open / View" badge
+  over interactive surfaces. Hidden on touch and reduced-motion.
+- **Transitions:** black/red wipe between landing and topic pages; topic page
+  opens with the same cover the card carried (visual continuity).
+
 ## Design read
 For brand and marketing decision-makers evaluating a creative AI studio: the site
 must feel like sitting in a dark screening room while expensive work is projected,

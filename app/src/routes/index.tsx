@@ -5,8 +5,7 @@ import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Nav } from "../components/Nav";
 import { HeroScrub } from "../components/HeroScrub";
-import { WorkSection } from "../components/WorkSection";
-import { ServicesIndex } from "../components/ServicesIndex";
+import { CardDeck } from "../components/CardDeck";
 import { ProcessSection } from "../components/ProcessSection";
 import { ContactSection } from "../components/ContactSection";
 
@@ -19,7 +18,6 @@ function Index() {
   useEffect(() => installMotion(), []);
 
   // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.
-  // Hand-rolled word split (no split-type: its UMD build breaks worker SSR).
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const h1 = document.querySelector<HTMLElement>("h1.seif-display");
@@ -33,7 +31,7 @@ function Index() {
       wrap.style.cssText = "display:inline-block;overflow:hidden;vertical-align:top;";
       const inner = document.createElement("span");
       inner.style.display = "inline-block";
-      inner.textContent = word + (i < arr.length - 1 ? " " : "");
+      inner.textContent = word + (i < arr.length - 1 ? " " : "");
       wrap.appendChild(inner);
       h1.appendChild(wrap);
       words.push(inner);
@@ -58,8 +56,7 @@ function Index() {
       <Cursor />
       <Nav />
       <HeroScrub />
-      <WorkSection />
-      <ServicesIndex />
+      <CardDeck />
       <ProcessSection />
       <ContactSection />
     </main>

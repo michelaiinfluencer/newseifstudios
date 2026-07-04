@@ -2,46 +2,26 @@ import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion, scrollToTarget } from "../lib/motion";
 import { PROCESS_STEPS, AI_STACK, TIMELINE } from "../data/content";
 
-/* Process: vertical timeline with a red progress rail that grows with
-   scroll (scaleY transform), the AI stack strip, and the Day 1 to 7 rail. */
+/* Process (v2, condensed): steps as a tight 2x2 grid with hairline frames,
+   then the AI stack strip and the Day 1 to 7 rail. Keeps the landing short. */
 export function ProcessSection() {
   const rootRef = useRef<HTMLElement>(null);
-  const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const root = rootRef.current;
-    const rail = railRef.current;
-    if (!root || !rail) return;
-
-    const railTween = gsap.fromTo(
-      rail,
-      { scaleY: 0 },
-      {
-        scaleY: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root.querySelector("[data-steps]"),
-          start: "top 75%",
-          end: "bottom 55%",
-          scrub: 0.6,
-        },
-      },
-    );
-
+    if (!root) return;
     const steps = Array.from(root.querySelectorAll<HTMLElement>("[data-step]"));
-    const tweens = steps.map((s) =>
+    const tweens = steps.map((s, i) =>
       gsap.from(s, {
-        x: 42,
+        y: 26,
         ease: "power3.out",
         duration: 0.8,
-        scrollTrigger: { trigger: s, start: "top 86%" },
+        delay: (i % 2) * 0.08,
+        scrollTrigger: { trigger: s, start: "top 92%" },
       }),
     );
-
     return () => {
-      railTween.scrollTrigger?.kill();
-      railTween.kill();
       tweens.forEach((t) => {
         t.scrollTrigger?.kill();
         t.kill();
@@ -61,49 +41,36 @@ export function ProcessSection() {
         From brief to final delivery, this is exactly how Seif Studios works.
       </p>
 
-      {/* steps + rail */}
-      <div data-steps className="relative mt-16 md:ml-6">
-        <div
-          className="absolute bottom-0 left-0 top-0 hidden w-px md:block"
-          style={{ background: "var(--seif-gray-700)" }}
-          aria-hidden="true"
-        />
-        <div
-          ref={railRef}
-          className="absolute bottom-0 left-0 top-0 hidden w-px origin-top md:block"
-          style={{ background: "var(--seif-red)", boxShadow: "0 0 12px rgba(255,0,0,0.7)" }}
-          aria-hidden="true"
-        />
-        <div className="flex flex-col gap-16 md:pl-14">
-          {PROCESS_STEPS.map((st) => (
-            <div key={st.num} data-step className="max-w-2xl">
-              <div className="flex items-baseline gap-4">
-                <span
-                  className="seif-mono"
-                  style={{ color: "var(--seif-red)", fontSize: "1.05rem" }}
-                >
-                  {st.num}
-                </span>
-                <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
-                  {st.tag}
-                </span>
-              </div>
-              <h3 className="seif-display mt-2" style={{ fontSize: "clamp(1.3rem, 2.6vw, 2rem)" }}>
-                {st.title}
-              </h3>
-              <p className="mt-3 text-base leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
-                {st.desc}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {st.pills.map((p) => (
-                  <span key={p} className="seif-pill">
-                    {p}
-                  </span>
-                ))}
-              </div>
+      {/* steps: 2x2 grid */}
+      <div className="mt-14 grid grid-cols-1 gap-px md:grid-cols-2" style={{ background: "var(--seif-gray-700)" }}>
+        {PROCESS_STEPS.map((st) => (
+          <div key={st.num} data-step className="p-8 md:p-10" style={{ background: "var(--seif-black)" }}>
+            <div className="flex items-baseline gap-4">
+              <span
+                className="seif-mono"
+                style={{ color: "var(--seif-red)", fontSize: "1.05rem" }}
+              >
+                {st.num}
+              </span>
+              <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
+                {st.tag}
+              </span>
             </div>
-          ))}
-        </div>
+            <h3 className="seif-display mt-3" style={{ fontSize: "clamp(1.2rem, 2.2vw, 1.7rem)" }}>
+              {st.title}
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
+              {st.desc}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {st.pills.map((p) => (
+                <span key={p} className="seif-pill">
+                  {p}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* AI stack */}

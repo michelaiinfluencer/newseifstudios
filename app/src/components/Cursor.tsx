@@ -1,73 +1,58 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "../lib/motion";
 
-/* Spectacle-tier custom cursor: red dot + trailing ring.
-   Grows to "View" over [data-cursor="view"], magnetizes [data-magnetic].
-   CSS hides it on touch and reduced-motion. */
+/* V2 cursor: ONE small dot in mix-blend difference that springs after the
+   pointer. Over [data-cursor] surfaces it swells into a solid red badge with
+   a mono label ("Open", "View", "Play"). No ring. Hidden on touch and
+   reduced-motion, and until the first pointer move. */
 export function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring) return;
+    const label = labelRef.current;
+    if (!dot || !label) return;
     if (window.matchMedia("(hover: none)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const dotX = gsap.quickTo(dot, "x", { duration: 0.08, ease: "power2.out" });
-    const dotY = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power2.out" });
-    const ringX = gsap.quickTo(ring, "x", { duration: 0.35, ease: "power3.out" });
-    const ringY = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power3.out" });
+    const x = gsap.quickTo(dot, "x", { duration: 0.22, ease: "power3.out" });
+    const y = gsap.quickTo(dot, "y", { duration: 0.22, ease: "power3.out" });
+    const scale = gsap.quickTo(dot, "scale", { duration: 0.3, ease: "power3.out" });
 
     const onMove = (e: PointerEvent) => {
       dot.classList.add("is-live");
-      ring.classList.add("is-live");
-      dotX(e.clientX - 4);
-      dotY(e.clientY - 4);
-      ringX(e.clientX - ring.offsetWidth / 2);
-      ringY(e.clientY - ring.offsetHeight / 2);
-      const t = e.target as HTMLElement;
-      ring.classList.toggle("is-view", !!t.closest('[data-cursor="view"]'));
+      x(e.clientX);
+      y(e.clientY);
+      const t = (e.target as HTMLElement).closest<HTMLElement>("[data-cursor]");
+      if (t) {
+        const text = t.dataset.cursor || "Open";
+        if (label.textContent !== text) label.textContent = text;
+        dot.classList.add("is-badge");
+        scale(1);
+      } else {
+        dot.classList.remove("is-badge");
+        scale(1);
+      }
     };
-
-    const magnets = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-magnetic]"),
-    );
-    const cleanups: Array<() => void> = [];
-    magnets.forEach((m) => {
-      const mx = gsap.quickTo(m, "x", { duration: 0.3, ease: "power3.out" });
-      const my = gsap.quickTo(m, "y", { duration: 0.3, ease: "power3.out" });
-      const onEnterMove = (e: PointerEvent) => {
-        const r = m.getBoundingClientRect();
-        mx((e.clientX - (r.left + r.width / 2)) * 0.25);
-        my((e.clientY - (r.top + r.height / 2)) * 0.25);
-      };
-      const onLeave = () => {
-        mx(0);
-        my(0);
-      };
-      m.addEventListener("pointermove", onEnterMove);
-      m.addEventListener("pointerleave", onLeave);
-      cleanups.push(() => {
-        m.removeEventListener("pointermove", onEnterMove);
-        m.removeEventListener("pointerleave", onLeave);
-      });
-    });
+    const onDown = () => scale(0.85);
+    const onUp = () => scale(1);
 
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
+    window.addEventListener("pointerup", onUp, { passive: true });
     return () => {
       window.removeEventListener("pointermove", onMove);
-      cleanups.forEach((fn) => fn());
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointerup", onUp);
     };
   }, []);
 
   return (
-    <>
-      <div ref={dotRef} className="seif-cursor-dot" aria-hidden="true" />
-      <div ref={ringRef} className="seif-cursor-ring" aria-hidden="true">
-        <span className="seif-cursor-label">View</span>
-      </div>
-    </>
+    <div ref={dotRef} className="seif-cursor" aria-hidden="true">
+      <span ref={labelRef} className="seif-cursor-text">
+        Open
+      </span>
+    </div>
   );
 }
