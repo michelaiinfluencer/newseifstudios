@@ -49,7 +49,11 @@ export function ContactSection() {
           className="mt-6 transition-transform duration-300 hover:scale-110"
           aria-label="Seif Studios on Instagram"
         >
-          <img src="/assets/Logo/instagram.svg" alt="" style={{ width: 26, height: 26 }} />
+          <img
+            src="/assets/Logo/instagram.svg"
+            alt=""
+            style={{ width: 26, height: 26, filter: "invert(1)" }}
+          />
         </a>
       </div>
 
