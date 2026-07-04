@@ -7,11 +7,6 @@ export function ContactSection() {
     <section
       id="contact"
       className="relative flex flex-col overflow-hidden px-6 pt-36 md:px-14"
-      style={{
-        backgroundImage: "url(/assets/generated/atmosphere.jpg)",
-        backgroundSize: "cover",
-        backgroundPosition: "center bottom",
-      }}
     >
       <div className="relative z-10 flex flex-1 flex-col items-center py-20 text-center">
         <h2

@@ -128,32 +128,24 @@ export function CardDeck() {
 
     const setX = gsap.quickSetter(track, "x", "px");
     const slides = Array.from(track.querySelectorAll<HTMLElement>("[data-rail-slide]"));
-    const skewTo = gsap.quickTo(track, "skewX", { duration: 0.5, ease: "power3.out" });
 
+    // no snap and a tight scrub: the rail stops exactly when the user stops
     const st = ScrollTrigger.create({
       trigger: outer,
       start: "top top",
       end: "bottom bottom",
-      scrub: 0.5,
-      snap: { snapTo: 1 / (N - 1), duration: 0.35, ease: "power2.out" },
+      scrub: 0.3,
       onUpdate: (self) => {
         const x = -self.progress * (N - 1) * step;
         setX(x);
-        // velocity skew: the rail leans into fast scrolls, springs back at rest
-        const v = gsap.utils.clamp(-6, 6, self.getVelocity() / -300);
-        skewTo(v);
-        // 3D coverflow: cards rotate toward the center and sink in Z with
-        // distance; the centered card stands flat, full strength
+        // flat rail: distance from center only dims and gently shrinks
         const mid = window.innerWidth / 2;
         slides.forEach((s) => {
           const r = s.getBoundingClientRect();
-          const signed = (r.left + r.width / 2 - mid) / (step || 1);
-          const d = Math.min(1.6, Math.abs(signed));
+          const d = Math.min(1.4, Math.abs(r.left + r.width / 2 - mid) / (step || 1));
           const card = s.firstElementChild as HTMLElement;
-          card.style.transform =
-            `rotateY(${-Math.sign(signed) * Math.min(32, d * 34)}deg)` +
-            ` translateZ(${-d * 190}px)`;
-          card.style.opacity = String(1 - Math.min(0.45, d * 0.32));
+          card.style.transform = `scale(${1 - Math.min(0.06, d * 0.05)})`;
+          card.style.opacity = String(1 - Math.min(0.4, d * 0.28));
           card.classList.toggle("is-center", d < 0.5);
         });
         const idx = Math.round(self.progress * (N - 1)) + 1;
