@@ -119,10 +119,10 @@ export function WorkSection() {
     const headers = Array.from(root.querySelectorAll<HTMLElement>("[data-chapter-head]"));
     const tweens = headers.map((h) =>
       gsap.from(h, {
-        y: 48,
+        y: 24, // stays under the grid's 32px headroom even before triggering
         ease: "power3.out",
         duration: 0.9,
-        scrollTrigger: { trigger: h, start: "top 88%" },
+        scrollTrigger: { trigger: h, start: "top 92%" },
       }),
     );
     return () => {
