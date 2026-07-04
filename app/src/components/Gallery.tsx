@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "../lib/motion";
 import type { WorkPiece } from "../data/content";
 
-/* V4 topic gallery: three real columns (not CSS masonry) so each column can
-   drift at its own rate on scroll; tiles rise in with transform-only
-   reveals; hover is a red hairline frame plus a whisper of 3D tilt, never a
-   zoom. Lightbox v2: animated open, blurred backdrop, prev/next arrows,
-   counter, arrow-key navigation. */
+/* V8 topic gallery: four drifting columns of small tiles. Images are
+   uniform 3:4 crops; videos keep their true 9:16 / 16:9 format. Hover is a
+   gentle zoom (CSS), click opens the fullscreen lightbox with prev/next
+   arrows, counter, and arrow-key navigation. */
 
 function Tile({
   piece,
@@ -38,7 +37,10 @@ function Tile({
     <div className="seif-gtile" data-gtile>
       <div
         className="seif-tile"
-        style={{ aspectRatio: piece.ratio }}
+        style={{
+          aspectRatio: piece.kind === "image" ? "3/4" : piece.ratio,
+          borderRadius: 12,
+        }}
         data-cursor="View"
         onClick={() => onOpen(piece)}
         role="button"
@@ -86,12 +88,12 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
-  // split into 3 columns round-robin so columns can drift independently
-  const cols: WorkPiece[][] = [[], [], []];
-  const idxMap: number[][] = [[], [], []];
+  // split into 4 columns round-robin so columns can drift independently
+  const cols: WorkPiece[][] = [[], [], [], []];
+  const idxMap: number[][] = [[], [], [], []];
   pieces.forEach((p, i) => {
-    cols[i % 3].push(p);
-    idxMap[i % 3].push(i);
+    cols[i % 4].push(p);
+    idxMap[i % 4].push(i);
   });
 
   // tile entrances + per-column scroll drift (transform only)
@@ -112,7 +114,7 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
     const columns = Array.from(root.querySelectorAll<HTMLElement>("[data-gcol]"));
     const drifts = columns.map((c, i) =>
       gsap.to(c, {
-        y: i === 1 ? -46 : -12,
+        y: i % 2 === 1 ? -40 : -10,
         ease: "none",
         scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.7 },
       }),
@@ -158,9 +160,9 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
 
   return (
     <>
-      <div ref={rootRef} className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div ref={rootRef} className="grid grid-cols-2 gap-5 lg:grid-cols-4">
         {cols.map((col, c) => (
-          <div key={c} data-gcol className="flex flex-col gap-6" style={{ marginTop: c === 1 ? 56 : 0 }}>
+          <div key={c} data-gcol className="flex flex-col gap-5" style={{ marginTop: c % 2 === 1 ? 44 : 0 }}>
             {col.map((p, i) => (
               <Tile key={p.src} piece={p} index={idxMap[c][i]} onOpen={() => setOpenIdx(idxMap[c][i])} />
             ))}
@@ -172,7 +174,7 @@ export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
         <div
           ref={boxRef}
           className="fixed inset-0 z-[60] flex items-center justify-center p-6"
-          style={{ background: "rgba(0,0,0,0.88)", backdropFilter: "blur(18px)" }}
+          style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(18px)" }}
           onClick={() => setOpenIdx(null)}
           role="dialog"
           aria-modal="true"

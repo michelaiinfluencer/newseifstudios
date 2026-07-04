@@ -3,7 +3,6 @@ import { scrollToTarget } from "../lib/motion";
 
 const LINKS = [
   { label: "Work", target: "#work" },
-  { label: "Services", target: "#services" },
   { label: "Process", target: "#process" },
 ];
 
@@ -15,7 +14,7 @@ export function Nav() {
     const el = ref.current;
     if (!el) return;
     const onScroll = () => {
-      el.style.background = window.scrollY > 40 ? "rgba(0,0,0,0.7)" : "transparent";
+      el.style.background = window.scrollY > 40 ? "rgba(255,255,255,0.78)" : "transparent";
       el.style.backdropFilter = window.scrollY > 40 ? "blur(10px)" : "none";
     };
     onScroll();
@@ -35,9 +34,9 @@ export function Nav() {
 
       >
         <img
-          src="/assets/Logo/LogoSSWhite1.2.png"
+          src="/assets/Logo/logo3.2.png"
           alt="Seif Studios"
-          style={{ height: 26, width: "auto" }}
+          style={{ height: 52, width: "auto" }}
         />
       </button>
       <nav className="flex items-center gap-7">

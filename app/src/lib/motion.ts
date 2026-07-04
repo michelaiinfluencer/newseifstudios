@@ -48,36 +48,6 @@ export function installMotion(): () => void {
   };
 }
 
-/* Velocity type: [data-vtext] headlines lean and stretch with scroll speed,
-   springing back upright at rest. Transform only; skipped on reduced motion. */
-export function installVelocityText(): () => void {
-  if (typeof window === "undefined" || prefersReducedMotion()) return () => {};
-  const els = Array.from(document.querySelectorAll<HTMLElement>("[data-vtext]"));
-  if (!els.length) return () => {};
-  let last = window.scrollY;
-  let skew = 0;
-  let raf = 0;
-  const tick = () => {
-    raf = requestAnimationFrame(tick);
-    const v = window.scrollY - last;
-    last = window.scrollY;
-    const target = Math.max(-8, Math.min(8, v * 0.35));
-    skew += (target - skew) * 0.09;
-    if (Math.abs(skew) < 0.02) return;
-    const stretch = 1 + Math.min(0.06, Math.abs(skew) * 0.012);
-    for (const el of els) {
-      el.style.transform = `skewY(${skew * 0.4}deg) scaleY(${stretch})`;
-    }
-  };
-  raf = requestAnimationFrame(tick);
-  return () => {
-    cancelAnimationFrame(raf);
-    els.forEach((el) => {
-      el.style.transform = "";
-    });
-  };
-}
-
 export function scrollToTarget(target: string) {
   if (typeof window === "undefined") return;
   const el = document.querySelector(target);

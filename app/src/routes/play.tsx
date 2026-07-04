@@ -33,9 +33,9 @@ function PlayPage() {
       <header className="flex h-16 items-center justify-between px-6 md:px-14">
         <Link to="/" aria-label="Seif Studios home">
           <img
-            src="/assets/Logo/LogoSSWhite1.2.png"
+            src="/assets/Logo/logo3.2.png"
             alt="Seif Studios"
-            style={{ height: 26, width: "auto" }}
+            style={{ height: 52, width: "auto" }}
           />
         </Link>
         <Link to="/" className="seif-nav-link">

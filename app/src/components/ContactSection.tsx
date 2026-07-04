@@ -48,7 +48,7 @@ export function ContactSection() {
           <img
             src="/assets/Logo/instagram.svg"
             alt=""
-            style={{ width: 26, height: 26, filter: "invert(1)" }}
+            style={{ width: 26, height: 26 }}
           />
         </a>
       </div>
@@ -58,9 +58,9 @@ export function ContactSection() {
         style={{ borderTop: "1px solid var(--seif-gray-700)" }}
       >
         <img
-          src="/assets/Logo/LogoSSWhite1.2.png"
+          src="/assets/Logo/logo3.2.png"
           alt="Seif Studios"
-          style={{ height: 13, width: "auto" }}
+          style={{ height: 26, width: "auto" }}
         />
         <p className="text-xs" style={{ color: "var(--seif-gray-500)" }}>
           © 2026 Seif Studios. All rights reserved.

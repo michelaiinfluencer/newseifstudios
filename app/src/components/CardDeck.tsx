@@ -37,21 +37,30 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
     if (!card || prefersReducedMotion()) return go();
     const r = card.getBoundingClientRect();
     const overlay = document.createElement("div");
-    overlay.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:9000;overflow:hidden;background:#000;`;
+    overlay.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:9000;overflow:hidden;background:#fff;border-radius:14px;box-shadow:0 30px 80px rgba(17,17,19,0.25);`;
     const img = document.createElement("img");
     img.src = ch.coverKind === "video" ? (ch.coverPoster ?? ch.cover) : ch.cover;
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     overlay.appendChild(img);
     document.body.appendChild(overlay);
-    gsap.to(overlay, {
-      left: 0,
-      top: 0,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      duration: 0.6,
-      ease: "power3.inOut",
-      onComplete: go,
-    });
+    // destination: the topic page's cover slot in the top right
+    const vw = window.innerWidth;
+    const pad = vw >= 768 ? 56 : 24;
+    const targetW = Math.min(vw * 0.24, 340);
+    const targetH = (targetW * 4) / 3 / 1; // 3:4 slot
+    gsap
+      .timeline()
+      .to(overlay, { scale: 1.06, duration: 0.18, ease: "power2.out" })
+      .to(overlay, {
+        scale: 1,
+        left: vw - pad - targetW,
+        top: 96,
+        width: targetW,
+        height: targetH,
+        duration: 0.55,
+        ease: "power3.inOut",
+        onComplete: go,
+      });
   };
 
   return (
@@ -145,8 +154,9 @@ export function CardDeck() {
           const r = s.getBoundingClientRect();
           const d = Math.min(1.4, Math.abs(r.left + r.width / 2 - mid) / (step || 1));
           const card = s.firstElementChild as HTMLElement;
-          card.style.transform = `scale(${1 - Math.min(0.06, d * 0.05)})`;
-          card.style.opacity = String(1 - Math.min(0.4, d * 0.28));
+          card.style.transform = `scale(${1 - Math.min(0.05, d * 0.04)})`;
+          // edge shading: cards darken as they near the screen sides
+          card.style.filter = `brightness(${1 - Math.min(0.45, d * 0.32)})`;
           card.classList.toggle("is-center", d < 0.5);
         });
         const idx = Math.round(self.progress * (N - 1)) + 1;
@@ -176,7 +186,7 @@ export function CardDeck() {
           <div className="seif-rail-glow" aria-hidden="true" />
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
-              <h2 data-vtext className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+              <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
                 Seven Ways We Create
               </h2>
               <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>

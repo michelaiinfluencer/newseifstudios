@@ -14,7 +14,7 @@ export function Marquee({ items }: { items: string[] }) {
     </div>
   );
   return (
-    <div className="seif-marquee" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)" }}>
+    <div className="seif-marquee" style={{ background: "rgba(255,255,255,0.6)", backdropFilter: "blur(6px)" }}>
       <div className="seif-marquee-track">
         {row(false)}
         {row(true)}

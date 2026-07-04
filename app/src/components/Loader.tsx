@@ -48,9 +48,9 @@ export function Loader() {
   return (
     <div ref={rootRef} className="seif-loader" aria-hidden="true">
       <img
-        src="/assets/Logo/LogoSSWhite1.2.png"
+        src="/assets/Logo/logo3.2.png"
         alt=""
-        style={{ width: "min(280px, 60vw)", height: "auto" }}
+        style={{ width: "min(300px, 62vw)", height: "auto" }}
       />
       <span
         ref={numRef}

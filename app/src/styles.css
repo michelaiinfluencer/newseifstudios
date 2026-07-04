@@ -102,13 +102,15 @@
 @import "@fontsource-variable/inter";
 
 :root {
-  --seif-black: #000000;
-  --seif-white: #ffffff;
+  /* V8 light theme: the variable names keep their roles from the dark era,
+     --seif-black is the PAGE GROUND (now white), --seif-white is the INK. */
+  --seif-black: #ffffff;
+  --seif-white: #111113;
   --seif-red: #ff0000;
   --seif-red-hover: #dc0000;
-  --seif-gray-300: #a1a1a6;
-  --seif-gray-500: #6e6e73;
-  --seif-gray-700: #1d1d1f;
+  --seif-gray-300: #55555a;
+  --seif-gray-500: #8a8a8f;
+  --seif-gray-700: #e6e6ea;
   --seif-sans: "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
   --seif-mono: ui-monospace, "SF Mono", Menlo, Monaco, monospace;
 }
@@ -329,26 +331,26 @@
 .seif-rail-track {
   display: flex;
   align-items: center;
-  gap: 3rem;
+  gap: 5rem;
   flex: 1;
   will-change: transform;
 }
 .seif-rail-slide {
   flex-shrink: 0;
-  width: clamp(300px, min(30vw, 42vh), 430px);
+  width: clamp(380px, min(40vw, 40vh), 600px);
 }
 .seif-rail-slide .seif-card-media { aspect-ratio: 9/16; }
 
 /* hero floating film window */
 .seif-hero-window {
-  background: #050505;
+  background: #fafafa;
   border: 1px solid var(--seif-gray-700);
   border-radius: 18px;
   overflow: hidden;
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.18),
-    0 40px 100px rgba(0, 0, 0, 0.85),
-    0 0 70px rgba(255, 0, 0, 0.08);
+    0 0 0 1px rgba(255, 0, 0, 0.14),
+    0 30px 70px rgba(17, 17, 19, 0.18),
+    0 0 50px rgba(255, 0, 0, 0.05);
   will-change: transform;
 }
 .seif-hero-window-bar {
@@ -376,12 +378,13 @@
 /* process floating step cards */
 .seif-float-card {
   position: absolute;
-  width: min(420px, 82vw);
-  background: #0a0a0a;
+  width: min(400px, 82vw);
+  background: #ffffff;
   border: 1px solid var(--seif-gray-700);
-  border-radius: 16px;
-  padding: 1.8rem 2rem;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 0, 0, 0.07);
+  border-top: 3px solid var(--seif-red);
+  border-radius: 14px;
+  padding: 1.5rem 1.7rem;
+  box-shadow: 0 24px 60px rgba(17, 17, 19, 0.14);
   will-change: transform;
 }
 
@@ -390,7 +393,7 @@
   border: 1px solid var(--seif-gray-700);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 0, 0, 0.07);
+  box-shadow: 0 30px 80px rgba(17, 17, 19, 0.16), 0 0 40px rgba(255, 0, 0, 0.05);
   position: relative;
 }
 .seif-rail-slide .seif-card {
@@ -399,9 +402,9 @@
 }
 .seif-rail-slide .seif-card.is-center {
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.35),
-    0 40px 110px rgba(255, 0, 0, 0.16),
-    0 16px 50px rgba(0, 0, 0, 0.85);
+    0 0 0 1px rgba(255, 0, 0, 0.3),
+    0 30px 80px rgba(255, 0, 0, 0.1),
+    0 18px 50px rgba(17, 17, 19, 0.22);
 }
 .seif-rail-glow {
   position: absolute;
@@ -410,7 +413,7 @@
   width: 70vw;
   height: 70vh;
   transform: translate(-50%, -50%);
-  background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.13), transparent 62%);
+  background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.06), transparent 62%);
   pointer-events: none;
 }
 
@@ -422,7 +425,7 @@
   height: 200%;
   pointer-events: none;
   z-index: 8000;
-  opacity: 0.05;
+  opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: seif-grain-shift 0.9s steps(4) infinite;
 }
@@ -468,14 +471,15 @@
   white-space: nowrap;
 }
 
-/* gallery tiles: whisper tilt on hover (desktop) */
-.seif-gtile { will-change: transform; }
+/* gallery tiles: gentle zoom on hover (desktop), never a tilt */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .seif-gtile .seif-tile {
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  .seif-tile img,
+  .seif-tile video {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .seif-gtile:hover .seif-tile {
-    transform: perspective(900px) rotateX(1.6deg) rotateY(-1.6deg) translateY(-4px);
+  .seif-gtile:hover .seif-tile img,
+  .seif-gtile:hover .seif-tile video {
+    transform: scale(1.05);
   }
 }
 
@@ -492,14 +496,14 @@
   align-items: center;
   justify-content: center;
   color: var(--seif-white);
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.75);
   transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
   z-index: 2;
 }
 .seif-lb-arrow:hover {
   border-color: var(--seif-red);
   color: var(--seif-red);
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 /* topic header: tilted 3D cover frame */
@@ -507,12 +511,10 @@
   perspective: 1200px;
 }
 .seif-cover-frame > div {
-  transform: rotateY(-9deg) rotateX(2deg);
-  transform-style: preserve-3d;
+  border-radius: 14px;
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.3),
-    -30px 40px 90px rgba(0, 0, 0, 0.8),
-    0 0 80px rgba(255, 0, 0, 0.12);
+    0 0 0 1px rgba(255, 0, 0, 0.22),
+    0 26px 70px rgba(17, 17, 19, 0.2);
   overflow: hidden;
   will-change: transform;
 }
@@ -551,8 +553,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #fff;
-  mix-blend-mode: difference;
+  background: var(--seif-red);
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
@@ -574,13 +575,12 @@
   top: -38px;
   left: -38px;
   background: var(--seif-red);
-  mix-blend-mode: normal;
 }
 .seif-cursor-text {
   font-family: var(--seif-mono);
   font-size: 0.66rem;
   letter-spacing: 0.1em;
-  color: var(--seif-white);
+  color: #ffffff;
   opacity: 0;
   transition: opacity 0.25s ease 0.08s;
 }
@@ -595,13 +595,15 @@
   cursor: pointer;
   will-change: transform;
   background: var(--seif-gray-700);
+  border-radius: 14px;
+  overflow: hidden;
   transition: box-shadow 0.4s ease;
 }
 .seif-card:hover {
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.55),
-    0 30px 80px rgba(255, 0, 0, 0.14),
-    0 10px 40px rgba(0, 0, 0, 0.8);
+    0 0 0 1px rgba(255, 0, 0, 0.45),
+    0 24px 60px rgba(255, 0, 0, 0.1),
+    0 14px 40px rgba(17, 17, 19, 0.25);
 }
 .seif-card-media {
   position: relative;
@@ -679,7 +681,7 @@
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: var(--seif-black);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -690,6 +692,6 @@
 
 /* scrollbar */
 .seif::-webkit-scrollbar { width: 10px; }
-.seif::-webkit-scrollbar-track { background: var(--seif-black); }
+.seif::-webkit-scrollbar-track { background: #ffffff; }
 .seif::-webkit-scrollbar-thumb { background: var(--seif-gray-700); border-radius: 999px; }
 .seif::-webkit-scrollbar-thumb:hover { background: var(--seif-red); }

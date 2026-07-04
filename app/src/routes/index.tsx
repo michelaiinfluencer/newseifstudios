@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { installMotion, installVelocityText, gsap, prefersReducedMotion } from "../lib/motion";
+import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Ambience } from "../components/Ambience";
 import { Nav } from "../components/Nav";
 import { Hero3D } from "../components/Hero3D";
-import { FilmBand } from "../components/FilmBand";
 import { CardDeck } from "../components/CardDeck";
 import { ProcessSection } from "../components/ProcessSection";
 import { ContactSection } from "../components/ContactSection";
@@ -16,15 +15,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  // Lenis + GSAP bridge, then velocity-reactive headlines
-  useEffect(() => {
-    const cleanupMotion = installMotion();
-    const cleanupVText = installVelocityText();
-    return () => {
-      cleanupVText();
-      cleanupMotion();
-    };
-  }, []);
+  // Lenis + GSAP bridge (client-only side effect)
+  useEffect(() => installMotion(), []);
 
   // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.
   useEffect(() => {
@@ -68,7 +60,6 @@ function Index() {
       <Cursor />
       <Nav />
       <Hero3D />
-      <FilmBand />
       <CardDeck />
       <ProcessSection />
       <ContactSection />
