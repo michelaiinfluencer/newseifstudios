@@ -234,7 +234,7 @@
 .seif-nav-link {
   position: relative;
   color: var(--seif-gray-300);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 500;
   transition: color 0.25s ease;
   padding-bottom: 2px;
@@ -335,14 +335,16 @@
 }
 .seif-rail-slide {
   flex-shrink: 0;
-  width: clamp(380px, 50vw, 720px);
+  width: clamp(300px, min(30vw, 42vh), 430px);
 }
-.seif-rail-slide .seif-card-media { aspect-ratio: 16/10; }
+.seif-rail-slide .seif-card-media { aspect-ratio: 9/16; }
 
 /* hero floating film window */
 .seif-hero-window {
   background: #050505;
   border: 1px solid var(--seif-gray-700);
+  border-radius: 18px;
+  overflow: hidden;
   box-shadow:
     0 0 0 1px rgba(255, 0, 0, 0.18),
     0 40px 100px rgba(0, 0, 0, 0.85),
@@ -365,6 +367,31 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .seif-hero-window-dot { animation: none; }
+}
+.seif-hero-window--journey {
+  will-change: transform;
+  border-radius: 26px;
+}
+
+/* process floating step cards */
+.seif-float-card {
+  position: absolute;
+  width: min(420px, 82vw);
+  background: #0a0a0a;
+  border: 1px solid var(--seif-gray-700);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 0, 0, 0.07);
+  will-change: transform;
+}
+
+/* ballpit page frame */
+.seif-pit-frame {
+  border: 1px solid var(--seif-gray-700);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 0, 0, 0.07);
+  position: relative;
 }
 .seif-rail-slide .seif-card {
   transition: box-shadow 0.4s ease;

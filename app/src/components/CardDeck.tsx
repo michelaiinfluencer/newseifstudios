@@ -16,19 +16,19 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // hover starts the cover film (the coverflow rotation owns the transform)
+  // video covers play automatically while the card is on screen
   useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-    const onEnter = () => videoRef.current?.play().catch(() => {});
-    const onLeave = () => videoRef.current?.pause();
-    card.addEventListener("pointerenter", onEnter);
-    card.addEventListener("pointerleave", onLeave);
-    return () => {
-      card.removeEventListener("pointerenter", onEnter);
-      card.removeEventListener("pointerleave", onLeave);
-    };
+    const video = videoRef.current;
+    if (!video) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void video.play().catch(() => {});
+        else video.pause();
+      },
+      { rootMargin: "80px" },
+    );
+    io.observe(video);
+    return () => io.disconnect();
   }, []);
 
   const open = () => {
@@ -77,7 +77,8 @@ function Card({ ch, index }: { ch: WorkChapter; index: number }) {
               muted
               loop
               playsInline
-              preload="none"
+              preload="metadata"
+              autoPlay
             />
           ) : (
             <img src={ch.cover} alt={ch.title} loading={index < 3 ? "eager" : "lazy"} />

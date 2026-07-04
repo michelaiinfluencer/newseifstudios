@@ -37,7 +37,7 @@ export function Nav() {
         <img
           src="/assets/Logo/LogoSSWhite1.2.png"
           alt="Seif Studios"
-          style={{ height: 16, width: "auto" }}
+          style={{ height: 26, width: "auto" }}
         />
       </button>
       <nav className="flex items-center gap-7">

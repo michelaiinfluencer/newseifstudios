@@ -54,7 +54,7 @@ export function FilmBand() {
         canvas.width = w;
         canvas.height = h;
       }
-      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight) * 1.14; // crop in
       const dw = img.naturalWidth * scale;
       const dh = img.naturalHeight * scale;
       ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
@@ -91,17 +91,20 @@ export function FilmBand() {
       },
     });
 
-    let winTween: gsap.core.Tween | null = null;
+    // the journey: small on the left, swells to near fullscreen, exits small right
+    let winTl: gsap.core.Timeline | null = null;
     if (windowRef.current) {
-      winTween = gsap.fromTo(
-        windowRef.current,
-        { y: 34 },
-        {
-          y: -34,
-          ease: "none",
-          scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.4 },
-        },
-      );
+      winTl = gsap
+        .timeline({
+          scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.45 },
+        })
+        .fromTo(
+          windowRef.current,
+          { scale: 0.42, xPercent: -62 },
+          { scale: 1, xPercent: 0, duration: 0.4, ease: "power2.inOut" },
+        )
+        .to(windowRef.current, { scale: 1, xPercent: 0, duration: 0.25 })
+        .to(windowRef.current, { scale: 0.42, xPercent: 62, duration: 0.35, ease: "power2.inOut" });
     }
 
     const onResize = () => draw(Math.round(shown));
@@ -111,8 +114,8 @@ export function FilmBand() {
     return () => {
       killed = true;
       st.kill();
-      winTween?.scrollTrigger?.kill();
-      winTween?.kill();
+      winTl?.scrollTrigger?.kill();
+      winTl?.kill();
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
     };
@@ -131,18 +134,15 @@ export function FilmBand() {
           justifyContent: "center",
         }}
       >
-        <div className="w-full px-6 md:px-24">
-          <p className="seif-mono mb-4" style={{ color: "var(--seif-gray-500)" }}>
-            The brand film, played by your scroll
-          </p>
-          <div ref={windowRef} className="seif-hero-window">
+        <div className="w-full px-4 md:px-10">
+          <div ref={windowRef} className="seif-hero-window seif-hero-window--journey">
             <div className="seif-hero-window-bar">
               <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
                 seif studios, brand film
               </span>
               <span className="seif-hero-window-dot" />
             </div>
-            <div style={{ position: "relative", aspectRatio: "16/8" }}>
+            <div style={{ position: "relative", aspectRatio: "16/8.5" }}>
               <img
                 src="/assets/Video/Main/morfing.jpg"
                 alt="Seif Studios brand film"

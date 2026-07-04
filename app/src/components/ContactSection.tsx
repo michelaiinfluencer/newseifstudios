@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { CONTACT } from "../data/content";
 
 /* Contact: the giant statement with the oversized red period (the page's
@@ -52,16 +53,6 @@ export function ContactSection() {
         </a>
       </div>
 
-      {/* giant outlined sign-off */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none relative z-10 -mb-4 flex justify-center overflow-hidden"
-      >
-        <span className="seif-watermark" style={{ fontSize: "clamp(4rem, 12.5vw, 12rem)" }}>
-          SEIF STUDIOS
-        </span>
-      </div>
-
       <footer
         className="relative z-10 flex flex-col items-center justify-between gap-4 py-8 sm:flex-row"
         style={{ borderTop: "1px solid var(--seif-gray-700)" }}
@@ -75,6 +66,9 @@ export function ContactSection() {
           © 2026 Seif Studios. All rights reserved.
         </p>
         <div className="flex items-center gap-6">
+          <Link to="/play" className="seif-nav-link" style={{ fontSize: "0.75rem" }}>
+            Have a Play
+          </Link>
           <a
             href={`mailto:${CONTACT.email}`}
             className="seif-nav-link"

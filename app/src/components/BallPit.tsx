@@ -67,7 +67,7 @@ export function BallPit() {
     const populate = () => {
       const { w, h } = size();
       balls.length = 0;
-      const count = w < 700 ? 14 : 22;
+      const count = w < 700 ? 20 : 34;
       for (let i = 0; i < count; i++) {
         const r = (w < 700 ? 26 : 34) + Math.abs(Math.sin(i * 37.7)) * (w < 700 ? 22 : 34);
         const x = (i / count) * (w - 2 * r) + r + Math.sin(i * 91.3) * 14;
@@ -253,21 +253,16 @@ export function BallPit() {
   }, []);
 
   return (
-    <section ref={hostRef} className="px-6 pt-28 md:px-14">
-      <h2 data-vtext className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+    <section ref={hostRef} className="mx-auto w-full max-w-5xl px-6 pt-16">
+      <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
         Have a Play
       </h2>
       <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>
         The work, loose in the room. Flick it around.
       </p>
       <div
-        className="mt-10"
-        style={{
-          height: "min(62vh, 560px)",
-          border: "1px solid var(--seif-gray-700)",
-          position: "relative",
-          overflow: "hidden",
-        }}
+        className="seif-pit-frame mt-10"
+        style={{ height: "min(50vh, 460px)" }}
       >
         <canvas
           ref={canvasRef}

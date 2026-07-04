@@ -1,104 +1,74 @@
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "../lib/motion";
 
-/* Interactive 3D hero object: a raymarched liquid blob of red glass,
-   original shader work in the brand language. It breathes on its own,
-   leans toward the cursor, and its turbulence rises with scroll velocity.
-   Inflates from zero as the loader hands off ("seif:loaded" event).
-   Touch and reduced-motion get a calm, slowly-breathing version. */
+/* The living S: the brand's own liquid glyph on a WebGL plane, waving like
+   molten glass. It undulates on a noise field, ripples away from the
+   cursor, and churns harder while you scroll. No-WebGL and reduced-motion
+   fall back to the static red S. */
+
+const TEX = "/assets/generated/s-red.png";
 
 const VERT = `
 attribute vec2 aPos;
-void main() { gl_Position = vec4(aPos, 0.0, 1.0); }`;
+varying vec2 vUv;
+void main() {
+  vUv = vec2(aPos.x * 0.5 + 0.5, 0.5 - aPos.y * 0.5);
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}`;
 
 const FRAG = `
-precision highp float;
-uniform vec2 uRes;
+precision mediump float;
+varying vec2 vUv;
+uniform sampler2D uTex;
 uniform float uTime;
 uniform vec2 uMouse;
 uniform float uAmp;
 uniform float uIntro;
+uniform vec2 uFit;
 
-// simplex-ish 3D noise (hash based, compact)
-vec3 hash3(vec3 p) {
-  p = vec3(dot(p, vec3(127.1, 311.7, 74.7)),
-           dot(p, vec3(269.5, 183.3, 246.1)),
-           dot(p, vec3(113.5, 271.9, 124.6)));
-  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-}
-float noise(vec3 p) {
-  vec3 i = floor(p);
-  vec3 f = fract(p);
-  vec3 u = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(mix(dot(hash3(i), f),
-            dot(hash3(i + vec3(1,0,0)), f - vec3(1,0,0)), u.x),
-        mix(dot(hash3(i + vec3(0,1,0)), f - vec3(0,1,0)),
-            dot(hash3(i + vec3(1,1,0)), f - vec3(1,1,0)), u.x), u.y),
-    mix(mix(dot(hash3(i + vec3(0,0,1)), f - vec3(0,0,1)),
-            dot(hash3(i + vec3(1,0,1)), f - vec3(1,0,1)), u.x),
-        mix(dot(hash3(i + vec3(0,1,1)), f - vec3(0,1,1)),
-            dot(hash3(i + vec3(1,1,1)), f - vec3(1,1,1)), u.x), u.y), u.z);
-}
-
-float blobSDF(vec3 p) {
-  float t = uTime * 0.35;
-  float base = length(p) - 1.0 * uIntro;
-  float n = noise(p * 1.9 + vec3(t, t * 0.7, -t * 0.5)) * 0.28
-          + noise(p * 4.2 - vec3(t * 1.3, 0.0, t)) * 0.09;
-  // cursor pulls the surface toward it
-  vec3 m = vec3(uMouse * 1.4, 0.6);
-  float pull = 0.22 * exp(-2.5 * length(p - m));
-  return base + n * uAmp * uIntro - pull;
-}
-
-vec3 calcNormal(vec3 p) {
-  vec2 e = vec2(0.0015, 0.0);
-  return normalize(vec3(
-    blobSDF(p + e.xyy) - blobSDF(p - e.xyy),
-    blobSDF(p + e.yxy) - blobSDF(p - e.yxy),
-    blobSDF(p + e.yyx) - blobSDF(p - e.yyx)));
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x),
+             mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
 
 void main() {
-  vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / min(uRes.x, uRes.y);
-  vec3 ro = vec3(0.0, 0.0, 3.1);
-  vec3 rd = normalize(vec3(uv, -2.0));
+  // contain-fit the glyph inside the plane
+  vec2 uv = (vUv - 0.5) * uFit + 0.5;
 
-  float d = 0.0;
-  float dist;
-  vec3 p;
-  bool hit = false;
-  for (int i = 0; i < 80; i++) {
-    p = ro + rd * d;
-    dist = blobSDF(p);
-    if (dist < 0.001) { hit = true; break; }
-    d += dist * 0.8;
-    if (d > 7.0) break;
-  }
+  float t = uTime * 0.6;
+  // flowing liquid wobble
+  vec2 flow = vec2(
+    noise(uv * 3.0 + vec2(t, 0.0)) - 0.5,
+    noise(uv * 3.0 + vec2(0.0, t * 1.2) + 7.3) - 0.5
+  ) * 0.05 * uAmp;
+  // cursor ripple pushes the surface away
+  vec2 toMouse = uv - uMouse;
+  float md = length(toMouse);
+  flow += normalize(toMouse + 0.0001) * 0.035 * exp(-6.0 * md) *
+          sin(md * 40.0 - uTime * 5.0) * uAmp;
+  // intro: the glyph gathers from scattered liquid
+  flow *= 1.0 + (1.0 - uIntro) * 6.0;
 
-  vec3 col = vec3(0.0);
-  float alpha = 0.0;
-  if (hit) {
-    vec3 n = calcNormal(p);
-    vec3 l = normalize(vec3(0.6, 0.8, 0.9));
-    float diff = max(dot(n, l), 0.0);
-    float fres = pow(1.0 - max(dot(n, -rd), 0.0), 2.6);
-    vec3 red = vec3(1.0, 0.0, 0.0);
-    vec3 deep = vec3(0.28, 0.0, 0.0);
-    col = deep * (0.35 + 0.65 * diff);
-    col += red * fres * 1.5;
-    // white-hot specular core
-    vec3 h = normalize(l - rd);
-    col += vec3(1.0, 0.85, 0.8) * pow(max(dot(n, h), 0.0), 60.0) * 0.9;
-    alpha = 1.0;
-  } else {
-    // soft red halo behind the blob
-    float glow = exp(-2.6 * length(uv - uMouse * 0.12)) * 0.16 * uIntro;
-    col = vec3(glow, 0.0, 0.0);
-    alpha = glow * 3.0;
+  vec2 suv = uv + flow;
+  if (suv.x < 0.0 || suv.x > 1.0 || suv.y < 0.0 || suv.y > 1.0) {
+    gl_FragColor = vec4(0.0);
+    return;
   }
-  gl_FragColor = vec4(col, alpha);
+  vec4 tex = texture2D(uTex, suv);
+  float a = tex.a * uIntro;
+
+  // molten shading: brighter along the flow crests, white-hot sparks
+  float shade = noise(suv * 5.0 + vec2(t * 0.7, -t * 0.4));
+  vec3 col = mix(vec3(0.45, 0.0, 0.0), vec3(1.0, 0.05, 0.05), shade);
+  col += vec3(1.0, 0.65, 0.55) * pow(shade, 6.0) * 0.9;
+  // rim glow near the cursor
+  col += vec3(1.0, 0.1, 0.1) * exp(-8.0 * md) * 0.4;
+
+  gl_FragColor = vec4(col * a, a);
 }`;
 
 export function HeroBlob() {
@@ -107,8 +77,9 @@ export function HeroBlob() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = canvas.getContext("webgl", { alpha: true, antialias: true });
-    if (!gl) return; // the CSS glow fallback below stays visible
+    if (prefersReducedMotion()) return; // static S fallback stays
+    const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: true });
+    if (!gl) return;
 
     const compile = (type: number, src: string) => {
       const s = gl.createShader(type)!;
@@ -122,7 +93,6 @@ export function HeroBlob() {
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return; // fallback stays
     gl.useProgram(prog);
-    canvas.style.opacity = "1"; // shader is live: reveal the canvas
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -131,33 +101,51 @@ export function HeroBlob() {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-    const uRes = gl.getUniformLocation(prog, "uRes");
+    const uTex = gl.getUniformLocation(prog, "uTex");
     const uTime = gl.getUniformLocation(prog, "uTime");
     const uMouse = gl.getUniformLocation(prog, "uMouse");
     const uAmp = gl.getUniformLocation(prog, "uAmp");
     const uIntro = gl.getUniformLocation(prog, "uIntro");
+    const uFit = gl.getUniformLocation(prog, "uFit");
+    gl.uniform1i(uTex, 0);
 
-    const calm = prefersReducedMotion();
+    let texW = 1;
+    let texH = 1;
+    let ready = false;
+    const img = new Image();
+    img.src = TEX;
+    img.onload = () => {
+      const tex = gl.createTexture()!;
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      texW = img.naturalWidth;
+      texH = img.naturalHeight;
+      ready = true;
+      canvas.style.opacity = "1"; // texture live: reveal, hide fallback
+    };
+
     let raf = 0;
-    let mouse = { x: 0, y: 0 };
-    let smooth = { x: 0, y: 0 };
-    let amp = calm ? 0.55 : 0.8;
-    let ampTarget = amp;
-    let intro = 0; // inflates on loader handoff
+    let killed = false;
+    const mouse = { x: 0.5, y: 0.5 };
+    const smooth = { x: 0.5, y: 0.5 };
+    let amp = 1;
+    let ampTarget = 1;
+    let intro = 0;
     let introTarget = 1;
     let lastScroll = 0;
-    let killed = false;
 
-    // wait for the loader; if it already finished (or never ran), start now
     const onLoaded = () => {
       introTarget = 1;
     };
     if (document.querySelector(".seif-loader")) {
       introTarget = 0;
       window.addEventListener("seif:loaded", onLoaded, { once: true });
-      // safety: never stay deflated
       setTimeout(() => {
         introTarget = 1;
       }, 2600);
@@ -165,22 +153,22 @@ export function HeroBlob() {
 
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
-      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
-      mouse.y = -(((e.clientY - r.top) / r.height) * 2 - 1);
+      mouse.x = (e.clientX - r.left) / r.width;
+      mouse.y = (e.clientY - r.top) / r.height;
     };
-    if (!calm) window.addEventListener("pointermove", onMove, { passive: true });
-
+    window.addEventListener("pointermove", onMove, { passive: true });
     const onScroll = () => {
       const v = Math.min(1.6, Math.abs(window.scrollY - lastScroll) / 60);
       lastScroll = window.scrollY;
-      ampTarget = 0.8 + v * 0.5;
+      ampTarget = 1 + v * 0.9;
     };
-    if (!calm) window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     const t0 = performance.now();
     const tick = () => {
       if (killed) return;
       raf = requestAnimationFrame(tick);
+      if (!ready) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = Math.round(canvas.clientWidth * dpr);
       const h = Math.round(canvas.clientHeight * dpr);
@@ -189,12 +177,19 @@ export function HeroBlob() {
         canvas.height = h;
       }
       gl.viewport(0, 0, w, h);
-      smooth.x += (mouse.x - smooth.x) * 0.06;
-      smooth.y += (mouse.y - smooth.y) * 0.06;
-      amp += (ampTarget - amp) * 0.04;
-      ampTarget += (0.8 - ampTarget) * 0.02; // settle back after scroll bursts
-      intro += (introTarget - intro) * 0.045;
-      gl.uniform2f(uRes, w, h);
+      smooth.x += (mouse.x - smooth.x) * 0.07;
+      smooth.y += (mouse.y - smooth.y) * 0.07;
+      amp += (ampTarget - amp) * 0.05;
+      ampTarget += (1 - ampTarget) * 0.02;
+      intro += (introTarget - intro) * 0.04;
+      // contain fit with 12% margin
+      const canvasAspect = w / h;
+      const texAspect = texW / texH;
+      let fx = 1.24;
+      let fy = 1.24;
+      if (canvasAspect > texAspect) fx = (canvasAspect / texAspect) * 1.24;
+      else fy = (texAspect / canvasAspect) * 1.24;
+      gl.uniform2f(uFit, fx, fy);
       gl.uniform1f(uTime, (performance.now() - t0) / 1000);
       gl.uniform2f(uMouse, smooth.x, smooth.y);
       gl.uniform1f(uAmp, amp);
@@ -216,16 +211,18 @@ export function HeroBlob() {
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {/* no-WebGL fallback: a breathing red orb glow */}
-      <div
+      {/* static fallback: the red S as-is */}
+      <img
+        src={TEX}
+        alt=""
         aria-hidden="true"
         style={{
           position: "absolute",
-          inset: "8%",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle at 38% 34%, rgba(255,80,80,0.85), rgba(230,0,0,0.55) 42%, rgba(70,0,0,0.35) 68%, transparent 74%)",
-          filter: "blur(2px)",
+          inset: "10%",
+          width: "80%",
+          height: "80%",
+          objectFit: "contain",
+          filter: "drop-shadow(0 0 60px rgba(255,0,0,0.35))",
         }}
       />
       <canvas
@@ -236,10 +233,9 @@ export function HeroBlob() {
           width: "100%",
           height: "100%",
           display: "block",
-          opacity: 0, // revealed once a WebGL context succeeds
-          background: "#000",
+          opacity: 0, // revealed once the shader and texture are live
         }}
-        aria-label="Interactive red liquid sculpture"
+        aria-label="Liquid red S, the Seif Studios mark"
         role="img"
       />
     </div>

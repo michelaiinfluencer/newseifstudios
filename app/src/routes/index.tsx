@@ -8,9 +8,7 @@ import { Nav } from "../components/Nav";
 import { Hero3D } from "../components/Hero3D";
 import { FilmBand } from "../components/FilmBand";
 import { CardDeck } from "../components/CardDeck";
-import { SelectedReel } from "../components/SelectedReel";
 import { ProcessSection } from "../components/ProcessSection";
-import { BallPit } from "../components/BallPit";
 import { ContactSection } from "../components/ContactSection";
 
 export const Route = createFileRoute("/")({
@@ -72,9 +70,7 @@ function Index() {
       <Hero3D />
       <FilmBand />
       <CardDeck />
-      <SelectedReel />
       <ProcessSection />
-      <BallPit />
       <ContactSection />
     </main>
   );
