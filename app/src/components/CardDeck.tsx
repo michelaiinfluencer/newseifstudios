@@ -175,7 +175,7 @@ export function CardDeck() {
           <div className="seif-rail-glow" aria-hidden="true" />
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
-              <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
+              <h2 data-vtext className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.6rem)" }}>
                 Seven Ways We Create
               </h2>
               <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>

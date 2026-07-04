@@ -1,13 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
+import { installMotion, installVelocityText, gsap, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Ambience } from "../components/Ambience";
 import { Nav } from "../components/Nav";
-import { HeroVideo } from "../components/HeroVideo";
+import { Hero3D } from "../components/Hero3D";
+import { FilmBand } from "../components/FilmBand";
 import { CardDeck } from "../components/CardDeck";
+import { SelectedReel } from "../components/SelectedReel";
 import { ProcessSection } from "../components/ProcessSection";
+import { BallPit } from "../components/BallPit";
 import { ContactSection } from "../components/ContactSection";
 
 export const Route = createFileRoute("/")({
@@ -15,8 +18,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  // Lenis + GSAP bridge (client-only side effect)
-  useEffect(() => installMotion(), []);
+  // Lenis + GSAP bridge, then velocity-reactive headlines
+  useEffect(() => {
+    const cleanupMotion = installMotion();
+    const cleanupVText = installVelocityText();
+    return () => {
+      cleanupVText();
+      cleanupMotion();
+    };
+  }, []);
 
   // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.
   useEffect(() => {
@@ -29,8 +39,6 @@ function Index() {
     const words: HTMLElement[] = [];
     original.split(" ").forEach((word, i, arr) => {
       const wrap = document.createElement("span");
-      // trailing whitespace collapses inside inline-blocks, so word gaps
-      // are real margins instead of spaces
       wrap.style.cssText =
         "display:inline-block;overflow:hidden;vertical-align:top;" +
         (i < arr.length - 1 ? "margin-right:0.24em;" : "");
@@ -46,7 +54,7 @@ function Index() {
       duration: 1.0,
       ease: "power4.out",
       stagger: 0.07,
-      delay: 1.5, // lands as the loader wipes away
+      delay: 1.5,
     });
     return () => {
       tween.kill();
@@ -61,9 +69,12 @@ function Index() {
       <Ambience />
       <Cursor />
       <Nav />
-      <HeroVideo />
+      <Hero3D />
+      <FilmBand />
       <CardDeck />
+      <SelectedReel />
       <ProcessSection />
+      <BallPit />
       <ContactSection />
     </main>
   );

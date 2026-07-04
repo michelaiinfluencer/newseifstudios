@@ -40,7 +40,7 @@ export function ProcessSection() {
         backgroundPosition: "center",
       }}
     >
-      <h2 className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.8rem)" }}>
+      <h2 data-vtext className="seif-display" style={{ fontSize: "clamp(2rem, 4.6vw, 3.8rem)" }}>
         How We Turn Ideas Into Visuals
       </h2>
       <p

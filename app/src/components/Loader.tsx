@@ -15,10 +15,17 @@ export function Loader() {
     if (!root || !num) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setDone(true);
+      window.dispatchEvent(new Event("seif:loaded"));
       return;
     }
     const counter = { v: 0 };
-    const tl = gsap.timeline({ onComplete: () => setDone(true) });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setDone(true);
+        // hand off to the hero: the blob inflates as the curtain lifts
+        window.dispatchEvent(new Event("seif:loaded"));
+      },
+    });
     tl.to(counter, {
       v: 100,
       duration: 1.1,
