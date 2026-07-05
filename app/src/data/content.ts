@@ -89,8 +89,9 @@ export const WORK_CHAPTERS: WorkChapter[] = [
   {
     id: "product",
     num: "04",
-    cover: `${A}/Image/Products/PortfolioProductImage7.jpg`,
-    coverKind: "image",
+    cover: `${A}/Video/Videos/PortfoliVideoVideo7.mp4`,
+    coverKind: "video",
+    coverPoster: `${A}/Video/Videos/PortfoliVideoVideo7.jpg`,
     title: "Product Placement",
     sub: "Your product at the center of high conversion AI environments: studio, lifestyle, luxury, street.",
     pieces: [

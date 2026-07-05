@@ -18,8 +18,13 @@ const QUANTA_ICONS_SHIM = fileURLToPath(
   new URL("./src/lib/quanta-lucide-icons.ts", import.meta.url),
 );
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const designInspectorEnabled = process.env.HF_DESIGN_INSPECTOR === "1" || mode === "design";
+  // Bundle every dep into the SSR output ONLY for the production Worker build
+  // (Cloudflare Workers have no node_modules at runtime). During `vite dev`,
+  // leave deps external so Vite's dev module-runner doesn't inline React's
+  // CommonJS entry and evaluate it as ESM (which throws "module is not defined").
+  const bundleForWorker = command === "build";
 
   return {
     resolve: {
@@ -28,10 +33,10 @@ export default defineConfig(({ mode }) => {
     // The server bundle runs as a Cloudflare Worker — there is no node_modules
     // at runtime. Vite's default SSR build leaves npm deps as bare external
     // imports (h3, react, @tanstack/*, seroval, …), which resolve on a Node
-    // server but throw "No such module" in a Worker. Bundle them all in.
-    // (node: builtins stay external — nodejs_compat provides them.)
+    // server but throw "No such module" in a Worker. Bundle them all in FOR THE
+    // BUILD only. (node: builtins stay external — nodejs_compat provides them.)
     ssr: {
-      noExternal: true,
+      noExternal: bundleForWorker ? true : undefined,
       // `cloudflare:workers` is a workerd runtime built-in that exposes the Worker
       // env / bindings (D1 `DB`, R2 `STORAGE`). Like node: builtins it must NOT be
       // bundled; the runtime provides it. (`ssr.external` is typed string[].)
