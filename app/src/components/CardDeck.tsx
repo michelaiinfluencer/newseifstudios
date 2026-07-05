@@ -112,6 +112,28 @@ export function CardDeck() {
   const trackRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<HTMLDivElement>(null);
+
+  // mobile: light up the dot for the card currently swiped into view
+  useEffect(() => {
+    const track = trackRef.current;
+    const dotsEl = dotsRef.current;
+    if (!track || !dotsEl) return;
+    if (window.matchMedia("(min-width: 768px)").matches) return; // touch/mobile only
+    const dots = Array.from(dotsEl.children) as HTMLElement[];
+    const onScroll = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const p = max > 0 ? track.scrollLeft / max : 0;
+      const active = Math.round(p * (N - 1));
+      dots.forEach((d, i) => {
+        d.style.background = i === active ? "var(--seif-red)" : "var(--seif-gray-700)";
+        d.style.width = i === active ? "22px" : "7px";
+      });
+    };
+    onScroll();
+    track.addEventListener("scroll", onScroll, { passive: true });
+    return () => track.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
@@ -186,12 +208,7 @@ export function CardDeck() {
         <div className="seif-rail-sticky">
           <div className="flex items-end justify-between px-6 pt-24 md:px-14">
             <div>
-              <h2 className="seif-display seif-h2">
-                Seven Ways We Create
-              </h2>
-              <p className="mt-3 max-w-md text-base" style={{ color: "var(--seif-gray-300)" }}>
-                Scroll through the disciplines. Open one to enter its gallery.
-              </p>
+              <h2 className="seif-display seif-h2">Solutions</h2>
             </div>
             <div className="hidden text-right md:block">
               <span ref={counterRef} className="seif-mono" style={{ color: "var(--seif-gray-300)" }}>
@@ -212,6 +229,25 @@ export function CardDeck() {
           <div ref={trackRef} className="seif-rail-track">
             {WORK_CHAPTERS.map((ch, i) => (
               <Card key={ch.id} ch={ch} index={i} />
+            ))}
+          </div>
+          {/* mobile: swipe indicator so it reads as scrollable left/right */}
+          <div
+            ref={dotsRef}
+            className="mt-8 flex items-center justify-center gap-2 px-6 md:hidden"
+            aria-hidden="true"
+          >
+            {WORK_CHAPTERS.map((ch, i) => (
+              <span
+                key={ch.id}
+                style={{
+                  height: 7,
+                  width: i === 0 ? 22 : 7,
+                  borderRadius: 999,
+                  background: i === 0 ? "var(--seif-red)" : "var(--seif-gray-700)",
+                  transition: "width 0.25s ease, background 0.25s ease",
+                }}
+              />
             ))}
           </div>
         </div>

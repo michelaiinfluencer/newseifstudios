@@ -763,3 +763,14 @@ body.seif-lightbox-open .seif-back-float { display: none; }
 
 /* one size for every section title, matched to "How We Turn Ideas..." */
 .seif-h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); }
+
+/* mobile full-screen menu links */
+.seif-menu-link {
+  font-family: var(--seif-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  line-height: 1.3;
+  color: var(--seif-white);
+  text-align: left;
+}

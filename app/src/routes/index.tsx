@@ -35,9 +35,11 @@ function Index() {
     return () => clearTimeout(t);
   }, []);
 
-  // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.
+  // hero headline build (desktop only): the mobile hero has its own plain,
+  // minimalistic headline.
   useEffect(() => {
     if (prefersReducedMotion()) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     const h1 = document.querySelector<HTMLElement>("h1.seif-display");
     if (!h1 || h1.dataset.split === "1") return;
     h1.dataset.split = "1";
@@ -79,8 +81,8 @@ function Index() {
       <Hero3D />
       <CardDeck />
       <AIStack />
-      <DeliveryWeek />
       <ProcessSection />
+      <DeliveryWeek />
       <ContactSection />
     </main>
   );
