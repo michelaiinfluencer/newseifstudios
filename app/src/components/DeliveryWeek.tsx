@@ -35,9 +35,11 @@ export function DeliveryWeek() {
           ease: "none",
           scrollTrigger: {
             trigger: root,
-            start: "top 70%",
-            end: "bottom 75%",
-            scrub: 0.5,
+            // start only once the workflow is well in view, then draw as you
+            // keep scrolling down through it
+            start: "top 30%",
+            end: "bottom 70%",
+            scrub: 0.7,
           },
         },
       );

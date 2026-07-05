@@ -295,6 +295,7 @@
   overflow: hidden;
   background: var(--seif-gray-700);
   cursor: pointer;
+  transition: box-shadow 0.4s ease;
 }
 .seif-tile img,
 .seif-tile video {
@@ -308,11 +309,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 0 0 var(--seif-red);
-  transition: box-shadow 0.3s ease;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 0 rgba(17, 17, 19, 0.5);
+  transition: box-shadow 0.4s ease;
 }
 @media (hover: hover) {
-  .seif-tile:hover::after { box-shadow: inset 0 0 0 2px var(--seif-red); }
+  .seif-tile:hover::after { box-shadow: inset 0 0 0 1.5px rgba(17, 17, 19, 0.5); }
+  .seif-tile:hover { box-shadow: 8px 12px 26px rgba(17, 17, 19, 0.14); }
 }
 
 /* carousel rail */
@@ -402,9 +405,8 @@
 }
 .seif-rail-slide .seif-card.is-center {
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.3),
-    0 30px 80px rgba(255, 0, 0, 0.1),
-    0 18px 50px rgba(17, 17, 19, 0.22);
+    0 0 0 1px rgba(17, 17, 19, 0.35),
+    0 20px 50px rgba(17, 17, 19, 0.14);
 }
 .seif-rail-glow {
   position: absolute;
@@ -475,11 +477,11 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .seif-tile img,
   .seif-tile video {
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .seif-gtile:hover .seif-tile img,
   .seif-gtile:hover .seif-tile video {
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 }
 
@@ -601,9 +603,8 @@
 }
 .seif-card:hover {
   box-shadow:
-    0 0 0 1px rgba(255, 0, 0, 0.45),
-    0 24px 60px rgba(255, 0, 0, 0.1),
-    0 14px 40px rgba(17, 17, 19, 0.25);
+    0 0 0 1px rgba(17, 17, 19, 0.55),
+    10px 16px 34px rgba(17, 17, 19, 0.16);
 }
 .seif-card-media {
   position: relative;
@@ -654,7 +655,7 @@
   pointer-events: none;
 }
 .seif-card:hover .seif-card-num {
-  -webkit-text-stroke-color: var(--seif-red);
+  -webkit-text-stroke-color: rgba(255, 255, 255, 0.95);
 }
 .seif-card-meta {
   position: absolute;
@@ -670,9 +671,10 @@
   align-items: center;
   gap: 0.5em;
   margin-top: 0.5rem;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.35s ease;
 }
-.seif-card:hover .seif-card-count { color: var(--seif-red); }
+.seif-card:hover .seif-card-count { color: #ffffff; }
 @media (prefers-reduced-motion: reduce) {
   .seif-card-media img, .seif-card-media video { transition: none; }
   .seif-card:hover .seif-card-media img, .seif-card:hover .seif-card-media video { transform: none; }
