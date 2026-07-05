@@ -80,9 +80,10 @@ function Index() {
       <Nav />
       <Hero3D />
       <CardDeck />
-      <AIStack />
-      <ProcessSection />
       <DeliveryWeek />
+      <AIStack />
+      {/* "How We Turn Ideas Into Visuals" hidden for now */}
+      {false && <ProcessSection />}
       <ContactSection />
     </main>
   );

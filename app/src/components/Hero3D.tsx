@@ -14,6 +14,7 @@ export function Hero3D() {
   const filmRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mWrapRef = useRef<HTMLDivElement>(null);
+  const mFrameRef = useRef<HTMLDivElement>(null);
   const mVideoRef = useRef<HTMLVideoElement>(null);
 
   // autoplay both hero videos (only the visible one matters)
@@ -58,25 +59,22 @@ export function Hero3D() {
     };
   }, []);
 
-  // MOBILE scroll: the frameless film grows as you scroll
+  // MOBILE scroll: the frameless film grows almost too big for the screen,
+  // then fades out.
   useEffect(() => {
     if (prefersReducedMotion()) return;
     if (!window.matchMedia("(max-width: 767px)").matches) return;
     const wrap = mWrapRef.current;
-    const video = mVideoRef.current;
-    if (!wrap || !video) return;
-    const tw = gsap.fromTo(
-      video,
-      { scale: 0.8 },
-      {
-        scale: 1.25,
-        ease: "none",
-        scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.4 },
-      },
-    );
+    const frame = mFrameRef.current;
+    if (!wrap || !frame) return;
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.4 },
+    });
+    tl.fromTo(frame, { scale: 0.85 }, { scale: 1.85, ease: "none", duration: 0.82 }, 0);
+    tl.to(frame, { opacity: 0, ease: "power1.in", duration: 0.18 }, 0.82);
     return () => {
-      tw.scrollTrigger?.kill();
-      tw.kill();
+      tl.scrollTrigger?.kill();
+      tl.kill();
     };
   }, []);
 
@@ -158,25 +156,32 @@ export function Hero3D() {
       </div>
 
       {/* MOBILE HERO: frameless film in the middle, growing on scroll */}
-      <div ref={mWrapRef} className="relative md:hidden" style={{ height: "170vh" }}>
+      <div ref={mWrapRef} className="relative md:hidden" style={{ height: "220vh" }}>
         <div className="sticky top-0 flex h-dvh items-center justify-center overflow-hidden px-5">
-          <video
-            ref={mVideoRef}
-            src="/assets/Video/Main/morfing.mp4"
-            poster="/assets/Video/Main/morfing.jpg"
-            muted
-            loop
-            playsInline
-            autoPlay
-            preload="auto"
-            className="w-full max-w-[440px] rounded-2xl"
-            style={{ aspectRatio: "16/9", objectFit: "cover", willChange: "transform" }}
-          />
+          <div
+            ref={mFrameRef}
+            className="relative w-full max-w-[440px] overflow-hidden rounded-2xl"
+            style={{ aspectRatio: "16/9", willChange: "transform, opacity" }}
+          >
+            {/* video runs ~8px wider than the frame so the sides are cropped */}
+            <video
+              ref={mVideoRef}
+              src="/assets/Video/Main/morfing.mp4"
+              poster="/assets/Video/Main/morfing.jpg"
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="auto"
+              className="absolute top-0 h-full"
+              style={{ width: "calc(100% + 16px)", left: "-8px", objectFit: "cover" }}
+            />
+          </div>
         </div>
       </div>
 
       {/* MOBILE headline, after the film */}
-      <div className="px-6 pb-4 pt-2 text-center md:hidden">
+      <div className="px-6 pb-28 pt-2 text-center md:hidden">
         <div className="flex justify-center">
           <p className="seif-eyebrow">Creative AI Studio</p>
         </div>
@@ -186,11 +191,6 @@ export function Hero3D() {
         <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
           High end AI generated images and video for brands that want to stand out.
         </p>
-        <div className="mt-7 flex justify-center">
-          <button type="button" className="seif-cta-pill" onClick={() => scrollToTarget("#work")}>
-            Explore the Work
-          </button>
-        </div>
       </div>
     </>
   );
