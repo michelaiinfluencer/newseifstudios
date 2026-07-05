@@ -85,8 +85,7 @@ export function DeliveryWeek() {
     <section
       ref={sectionRef}
       id="workflow"
-      className="px-6 py-20 md:px-14"
-      style={{ borderTop: "1px solid var(--seif-gray-700)" }}
+      className="px-6 pb-20 pt-32 md:px-14 md:pt-40"
     >
       <div className="mx-auto w-full max-w-2xl">
         <h2 className="seif-display seif-h2">The Workflow</h2>

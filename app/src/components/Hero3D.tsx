@@ -70,8 +70,9 @@ export function Hero3D() {
     const tl = gsap.timeline({
       scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.4 },
     });
-    tl.fromTo(frame, { scale: 0.85 }, { scale: 1.85, ease: "none", duration: 0.82 }, 0);
-    tl.to(frame, { opacity: 0, ease: "power1.in", duration: 0.18 }, 0.82);
+    // starts already zoomed in, then keeps zooming to ~4x before fading out
+    tl.fromTo(frame, { scale: 1.2 }, { scale: 4, ease: "none", duration: 0.84 }, 0);
+    tl.to(frame, { opacity: 0, ease: "power1.in", duration: 0.16 }, 0.84);
     return () => {
       tl.scrollTrigger?.kill();
       tl.kill();

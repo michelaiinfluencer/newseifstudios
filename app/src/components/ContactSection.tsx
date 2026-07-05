@@ -65,7 +65,7 @@ export function ContactSection() {
         <p className="text-xs" style={{ color: "var(--seif-gray-500)" }}>
           © 2026 Seif Studios. All rights reserved.
         </p>
-        <div className="flex items-center gap-6">
+        <div className="hidden items-center gap-6 sm:flex">
           <Link to="/play" className="seif-nav-link" style={{ fontSize: "0.75rem" }}>
             Have a Play
           </Link>
