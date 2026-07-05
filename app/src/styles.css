@@ -704,8 +704,8 @@
 /* floating back-to-studio button (the big gallery page) */
 .seif-back-float {
   position: fixed;
-  right: 28px;
-  top: 24px;
+  right: 44px;
+  top: 40px;
   z-index: 900;
   display: inline-flex;
   align-items: center;
@@ -721,6 +721,45 @@
 }
 .seif-back-float:hover { background: var(--seif-red-hover); transform: translateY(-2px); }
 .seif-back-float:active { transform: scale(0.97); }
+/* a lightbox is open (photo/video fullscreen) — hide the button so it doesn't
+   overlap the close X */
+body.seif-lightbox-open .seif-back-float { display: none; }
+
+/* gallery caption overlaid on the photo (white, smaller than the cards) */
+.seif-tile-meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem 0.8rem 0.65rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+.seif-tile-label {
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.seif-tile-cap {
+  display: block;
+  margin-top: 0.1rem;
+  font-weight: 400;
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+.seif-tile-tag {
+  flex-shrink: 0;
+  font-family: var(--seif-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
 
 /* one size for every section title, matched to "How We Turn Ideas..." */
 .seif-h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); }

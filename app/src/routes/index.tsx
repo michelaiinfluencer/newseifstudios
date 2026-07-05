@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { installMotion, gsap, prefersReducedMotion } from "../lib/motion";
+import { installMotion, scrollToTarget, gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Ambience } from "../components/Ambience";
@@ -20,11 +20,19 @@ function Index() {
   // Lenis + GSAP bridge (client-only side effect)
   useEffect(() => installMotion(), []);
 
-  // returning from the gallery lands back on the requested section
+  // returning from the gallery lands back on the requested section. Give the
+  // sections a beat to mount + Lenis to init, then jump THROUGH Lenis (so it
+  // stays in sync) and refresh ScrollTrigger so every scroll-reveal recomputes
+  // its position — otherwise the sections below (AI Stack, Workflow, Process)
+  // stay stuck at opacity 0 after a client-side navigation back.
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     const h = window.location.hash.replace("#", "");
-    if (!h) return;
-    document.getElementById(h)?.scrollIntoView({ behavior: "instant" as ScrollBehavior });
+    const t = setTimeout(() => {
+      if (h && document.getElementById(h)) scrollToTarget(`#${h}`, true);
+      ScrollTrigger.refresh();
+    }, 60);
+    return () => clearTimeout(t);
   }, []);
 
   // hero headline build: fires ON MOUNT (not viewport-gated), transform-only.

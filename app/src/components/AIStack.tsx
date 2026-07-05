@@ -13,15 +13,21 @@ export function AIStack() {
     const grid = gridRef.current;
     if (!grid) return;
     const items = grid.querySelectorAll("[data-stack-item]");
-    const tween = gsap.from(items, {
-      opacity: 0,
-      y: 44,
-      scale: 0.94,
-      duration: 0.7,
-      ease: "power3.out",
-      stagger: 0.22,
-      scrollTrigger: { trigger: grid, start: "top 82%" },
-    });
+    // scrub-linked so the reveal is tied directly to scroll progress: the
+    // tools still materialize one after another, but the elements can never
+    // get stuck hidden after a client-side navigation (progress 1 = visible).
+    const tween = gsap.fromTo(
+      items,
+      { opacity: 0, y: 44, scale: 0.94 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        ease: "power2.out",
+        stagger: 0.3,
+        scrollTrigger: { trigger: grid, start: "top 85%", end: "top 42%", scrub: 0.6 },
+      },
+    );
     return () => {
       tween.scrollTrigger?.kill();
       tween.kill();

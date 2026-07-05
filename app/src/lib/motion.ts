@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 
-let installed = false;
 let lenis: Lenis | null = null;
 
 // Register at module load (guarded): child effects (HeroScrub, sections)
@@ -23,39 +22,41 @@ export function prefersReducedMotion(): boolean {
 }
 
 export function installMotion(): () => void {
-  if (installed || typeof window === "undefined") return () => {};
-  installed = true;
+  if (typeof window === "undefined" || prefersReducedMotion()) return () => {};
 
-  if (prefersReducedMotion()) {
-    return () => {
-      installed = false;
-    };
-  }
-
-  lenis = new Lenis({ autoRaf: false, lerp: 0.1, smoothWheel: true });
-  lenis.on("scroll", ScrollTrigger.update);
+  // Each mount gets its OWN Lenis + ticker fn, captured locally. On a route
+  // change the new page can mount before the old page's cleanup runs; using a
+  // shared module singleton meant the old cleanup would tear down the new
+  // page's Lenis (or a guard would skip creating one), leaving the returned
+  // page with a dead scroll->ScrollTrigger bridge so reveals never fired.
+  const localLenis = new Lenis({ autoRaf: false, lerp: 0.1, smoothWheel: true });
+  localLenis.on("scroll", ScrollTrigger.update);
   const tick = (time: number) => {
-    lenis?.raf(time * 1000);
+    localLenis.raf(time * 1000);
   };
   gsap.ticker.add(tick);
   gsap.ticker.lagSmoothing(0);
+  lenis = localLenis; // module ref just for scrollToTarget()
+  requestAnimationFrame(() => ScrollTrigger.refresh());
 
   return () => {
     gsap.ticker.remove(tick);
-    lenis?.destroy();
-    lenis = null;
-    installed = false;
+    localLenis.destroy();
+    if (lenis === localLenis) lenis = null; // only clear if still ours
   };
 }
 
-export function scrollToTarget(target: string) {
+export function scrollToTarget(target: string, immediate = false) {
   if (typeof window === "undefined") return;
   const el = document.querySelector(target);
   if (!el) return;
   if (lenis) {
-    lenis.scrollTo(el as HTMLElement, { offset: 0 });
+    // scroll THROUGH Lenis so its internal position stays in sync; a native
+    // scrollIntoView while Lenis is active desyncs ScrollTrigger and leaves
+    // scroll-reveal sections stuck hidden.
+    lenis.scrollTo(el as HTMLElement, { offset: 0, immediate });
   } else {
-    (el as HTMLElement).scrollIntoView({ behavior: "smooth" });
+    (el as HTMLElement).scrollIntoView({ behavior: immediate ? "auto" : "smooth" });
   }
 }
 

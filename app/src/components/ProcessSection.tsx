@@ -15,28 +15,23 @@ export function ProcessSection() {
     if (!row) return;
 
     const cards = Array.from(row.querySelectorAll<HTMLElement>("[data-step-card]"));
-    const anims: gsap.core.Timeline[] = cards.map((card, i) => {
-      const bar = card.querySelector("[data-bar]");
-      const num = card.querySelector("[data-num]");
-      const pills = card.querySelectorAll(".seif-pill");
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: row, start: "top 82%" },
-        delay: i * 0.16,
-      });
-      tl.from(card, { y: 80, opacity: 0, duration: 0.8, ease: "power3.out" });
-      if (bar) tl.from(bar, { scaleX: 0, duration: 0.5, ease: "power2.out" }, "-=0.35");
-      if (num)
-        tl.from(num, { scale: 1.9, opacity: 0, duration: 0.4, ease: "back.out(2)" }, "-=0.4");
-      if (pills.length)
-        tl.from(pills, { y: 14, opacity: 0, duration: 0.3, stagger: 0.05, ease: "power2.out" }, "-=0.2");
-      return tl;
-    });
+    // scrub-linked stagger: the four steps rise + fade in one after another,
+    // tied to scroll progress so they can't get stuck hidden after a nav.
+    const tween = gsap.fromTo(
+      cards,
+      { opacity: 0, y: 70 },
+      {
+        opacity: 1,
+        y: 0,
+        ease: "power3.out",
+        stagger: 0.2,
+        scrollTrigger: { trigger: row, start: "top 85%", end: "top 45%", scrub: 0.6 },
+      },
+    );
 
     return () => {
-      anims.forEach((t) => {
-        t.scrollTrigger?.kill();
-        t.kill();
-      });
+      tween.scrollTrigger?.kill();
+      tween.kill();
     };
   }, []);
 

@@ -65,17 +65,14 @@ function Tile({
             preload="none"
           />
         )}
-      </div>
-      <div className="mt-2 flex items-baseline justify-between gap-3">
-        <p className="text-sm font-medium" style={{ color: "var(--seif-white)" }}>
-          {piece.title}
-          <span className="ml-2" style={{ color: "var(--seif-gray-500)" }}>
-            {piece.caption}
-          </span>
-        </p>
-        <span className="seif-mono" style={{ color: "var(--seif-gray-500)" }}>
-          {piece.tag}
-        </span>
+        {/* caption overlaid on the photo (white, smaller than the cards) */}
+        <div className="seif-tile-meta">
+          <p className="seif-tile-label">
+            {piece.title}
+            <span className="seif-tile-cap">{piece.caption}</span>
+          </p>
+          <span className="seif-tile-tag">{piece.tag}</span>
+        </div>
       </div>
     </div>
   );
@@ -84,6 +81,13 @@ function Tile({
 export function Gallery({ pieces }: { pieces: WorkPiece[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  // while a lightbox is open, hide the floating Studio button (it sits above
+  // the lightbox and would overlap the close X)
+  useEffect(() => {
+    document.body.classList.toggle("seif-lightbox-open", openIdx !== null);
+    return () => document.body.classList.remove("seif-lightbox-open");
+  }, [openIdx]);
 
   // tile entrances + per-column scroll drift (transform only)
   useEffect(() => {
