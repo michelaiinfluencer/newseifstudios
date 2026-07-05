@@ -628,6 +628,7 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 26%);
 }
 .seif-card-glare {
+  display: none; /* hover glow (lightening in the middle) removed */
   --gx: 50;
   --gy: 50;
   position: absolute;

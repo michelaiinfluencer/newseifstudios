@@ -36,9 +36,10 @@ export function DeliveryWeek() {
           scrollTrigger: {
             trigger: root,
             // start only once the workflow is well in view, then draw as you
-            // keep scrolling down through it
+            // keep scrolling down through it. A long end range means the line
+            // moves slowly and needs a lot more scroll to complete.
             start: "top 30%",
-            end: "bottom 70%",
+            end: "bottom top",
             scrub: 0.7,
           },
         },
