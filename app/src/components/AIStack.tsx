@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, prefersReducedMotion } from "../lib/motion";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
 import { AI_STACK } from "../data/content";
 
 /* The AI Stack as its own full section: as you scroll in, the five tools
@@ -12,10 +12,41 @@ export function AIStack() {
     if (prefersReducedMotion()) return;
     const grid = gridRef.current;
     if (!grid) return;
-    const items = grid.querySelectorAll("[data-stack-item]");
-    // scrub-linked so the reveal is tied directly to scroll progress: the
-    // tools still materialize one after another, but the elements can never
-    // get stuck hidden after a client-side navigation (progress 1 = visible).
+    const items = Array.from(grid.querySelectorAll<HTMLElement>("[data-stack-item]"));
+
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      // mobile: hold, then reveal ~1s after the section enters. Uses an
+      // onEnter callback (fires reliably after nav) plus a force-show fallback
+      // if the section is already in view at mount, so it never stays hidden.
+      gsap.set(items, { opacity: 0, y: 44, scale: 0.94 });
+      let done = false;
+      const reveal = (delay: number) => {
+        if (done) return;
+        done = true;
+        gsap.to(items, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          ease: "power2.out",
+          stagger: 0.18,
+          delay,
+        });
+      };
+      const st = ScrollTrigger.create({
+        trigger: grid,
+        start: "top 80%",
+        once: true,
+        onEnter: () => reveal(1),
+      });
+      if (grid.getBoundingClientRect().top < window.innerHeight) reveal(0.15);
+      return () => {
+        st.kill();
+        gsap.killTweensOf(items);
+      };
+    }
+
+    // desktop: scrub-linked so the reveal is tied directly to scroll progress.
     const tween = gsap.fromTo(
       items,
       { opacity: 0, y: 44, scale: 0.94 },

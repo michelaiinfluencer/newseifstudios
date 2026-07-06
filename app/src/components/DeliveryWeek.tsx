@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, prefersReducedMotion } from "../lib/motion";
+import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
 import { TIMELINE } from "../data/content";
 
 /* The workflow week. On desktop the section PINS when it reaches the middle
@@ -49,19 +49,30 @@ export function DeliveryWeek() {
       };
     }
 
-    // mobile: no pin, scrub the line + days as you scroll past
-    const itemTweens = items.map((it) =>
-      gsap.fromTo(
-        it,
-        { opacity: 0, x: 40 },
-        {
-          opacity: 1,
-          x: 0,
-          ease: "power2.out",
-          scrollTrigger: { trigger: it, start: "top 92%", end: "top 62%", scrub: 0.5 },
-        },
-      ),
-    );
+    // mobile: no pin. The days hold, then reveal ~1s after the section enters
+    // (onEnter callback + force-show fallback so they never stay hidden). The
+    // line still draws with scroll.
+    gsap.set(items, { opacity: 0, x: 40 });
+    let done = false;
+    const reveal = (delay: number) => {
+      if (done) return;
+      done = true;
+      gsap.to(items, {
+        opacity: 1,
+        x: 0,
+        duration: 0.7,
+        ease: "power2.out",
+        stagger: 0.16,
+        delay,
+      });
+    };
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: "top 78%",
+      once: true,
+      onEnter: () => reveal(1),
+    });
+    if (root.getBoundingClientRect().top < window.innerHeight) reveal(0.15);
     const lineTween = gsap.fromTo(
       line,
       { scaleY: 0 },
@@ -72,10 +83,8 @@ export function DeliveryWeek() {
       },
     );
     return () => {
-      itemTweens.forEach((t) => {
-        t.scrollTrigger?.kill();
-        t.kill();
-      });
+      st.kill();
+      gsap.killTweensOf(items);
       lineTween.scrollTrigger?.kill();
       lineTween.kill();
     };
