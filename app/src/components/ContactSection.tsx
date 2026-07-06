@@ -9,7 +9,7 @@ export function ContactSection() {
       id="contact"
       className="relative flex flex-col overflow-hidden px-6 pt-36 md:px-14"
     >
-      <div className="relative z-10 flex flex-1 flex-col items-center pt-20 pb-40 text-center md:pb-24">
+      <div className="relative z-10 flex flex-1 flex-col items-center pt-20 pb-56 text-center md:pb-44">
         <h2
           className="seif-display"
           style={{ fontSize: "clamp(3rem, 10vw, 9rem)", lineHeight: 1 }}

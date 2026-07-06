@@ -20,16 +20,18 @@ function Index() {
   // Lenis + GSAP bridge (client-only side effect)
   useEffect(() => installMotion(), []);
 
-  // returning from the gallery lands back on the requested section. Give the
-  // sections a beat to mount + Lenis to init, then jump THROUGH Lenis (so it
-  // stays in sync) and refresh ScrollTrigger so every scroll-reveal recomputes
-  // its position — otherwise the sections below (AI Stack, Workflow, Process)
-  // stay stuck at opacity 0 after a client-side navigation back.
+  // A fresh load / refresh always starts at the very top; only when a hash is
+  // present (the gallery's "Studio" button returns to /#work) do we jump to
+  // that section. Jumping THROUGH Lenis keeps it in sync, and the refresh
+  // recomputes every scroll-reveal so nothing stays stuck after a nav back.
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (typeof history !== "undefined" && "scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
     const h = window.location.hash.replace("#", "");
     const t = setTimeout(() => {
       if (h && document.getElementById(h)) scrollToTarget(`#${h}`, true);
+      else if (window.scrollY > 0) window.scrollTo(0, 0);
       ScrollTrigger.refresh();
     }, 60);
     return () => clearTimeout(t);
