@@ -37,7 +37,7 @@ export function AIStack() {
         trigger: grid,
         start: "top 80%",
         once: true,
-        onEnter: () => reveal(1),
+        onEnter: () => reveal(0.7),
       });
       if (grid.getBoundingClientRect().top < window.innerHeight) reveal(0.15);
       return () => {

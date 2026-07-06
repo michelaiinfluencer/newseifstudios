@@ -7,9 +7,9 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative flex flex-col overflow-hidden px-6 pt-36 md:px-14"
+      className="relative flex flex-col overflow-hidden px-6 pt-88 pb-4 md:px-14"
     >
-      <div className="relative z-10 flex flex-1 flex-col items-center pt-20 pb-56 text-center md:pb-44">
+      <div className="relative z-10 flex flex-1 flex-col items-center pt-20 pb-44 mb-44 text-center md:pb-44 md:mb-44">
         <h2
           className="seif-display"
           style={{ fontSize: "clamp(3rem, 10vw, 9rem)", lineHeight: 1 }}
@@ -48,7 +48,7 @@ export function ContactSection() {
           <img
             src="/assets/Logo/instagram.svg"
             alt=""
-            style={{ width: 26, height: 26 }}
+            style={{ width: 56, height: 56 }}
           />
         </a>
       </div>

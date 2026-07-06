@@ -70,7 +70,7 @@ export function DeliveryWeek() {
       trigger: root,
       start: "top 78%",
       once: true,
-      onEnter: () => reveal(1),
+      onEnter: () => reveal(0.7),
     });
     if (root.getBoundingClientRect().top < window.innerHeight) reveal(0.15);
     const lineTween = gsap.fromTo(
