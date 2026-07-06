@@ -15,6 +15,7 @@ export function Hero3D() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const mWrapRef = useRef<HTMLDivElement>(null);
   const mFrameRef = useRef<HTMLDivElement>(null);
+  const mHeadRef = useRef<HTMLDivElement>(null);
   const mVideoRef = useRef<HTMLVideoElement>(null);
 
   // autoplay both hero videos (only the visible one matters)
@@ -59,20 +60,32 @@ export function Hero3D() {
     };
   }, []);
 
-  // MOBILE scroll: the frameless film grows almost too big for the screen,
-  // then fades out.
+  // MOBILE scroll: the film zooms in ~4x and fades out, and the headline
+  // (sitting behind it) is revealed as the video clears.
   useEffect(() => {
-    if (prefersReducedMotion()) return;
     if (!window.matchMedia("(max-width: 767px)").matches) return;
     const wrap = mWrapRef.current;
     const frame = mFrameRef.current;
-    if (!wrap || !frame) return;
+    const head = mHeadRef.current;
+    if (!wrap || !frame || !head) return;
+
+    if (prefersReducedMotion()) {
+      // no scroll film: hide the video, show the headline statically
+      gsap.set(frame, { opacity: 0 });
+      gsap.set(head, { opacity: 1 });
+      return;
+    }
+
     const tl = gsap.timeline({
       scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.4 },
     });
-    // starts already zoomed in, then keeps zooming to ~4x before fading out
-    tl.fromTo(frame, { scale: 1.2 }, { scale: 4, ease: "none", duration: 0.84 }, 0);
-    tl.to(frame, { opacity: 0, ease: "power1.in", duration: 0.16 }, 0.84);
+    // starts already zoomed in, then keeps zooming to ~4x
+    tl.fromTo(frame, { scale: 1.2 }, { scale: 4, ease: "none", duration: 0.6 }, 0);
+    // the film dissolves...
+    tl.to(frame, { opacity: 0, ease: "power1.in", duration: 0.14 }, 0.58);
+    // ...revealing the headline behind it (which then holds until the section releases)
+    tl.fromTo(head, { opacity: 0, y: 26 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.16 }, 0.62);
+
     return () => {
       tl.scrollTrigger?.kill();
       tl.kill();
@@ -156,42 +169,49 @@ export function Hero3D() {
         </div>
       </div>
 
-      {/* MOBILE HERO: frameless film in the middle, growing on scroll */}
+      {/* MOBILE HERO: film zooms + fades to reveal the headline behind it */}
       <div ref={mWrapRef} className="relative md:hidden" style={{ height: "220vh" }}>
-        <div className="sticky top-0 flex h-dvh items-center justify-center overflow-hidden px-5">
+        <div className="sticky top-0 h-dvh overflow-hidden">
+          {/* headline behind the video, revealed once the film clears */}
           <div
-            ref={mFrameRef}
-            className="relative w-full max-w-[440px] overflow-hidden rounded-2xl"
-            style={{ aspectRatio: "16/9", willChange: "transform, opacity" }}
+            ref={mHeadRef}
+            className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+            style={{ opacity: 0 }}
           >
-            {/* video runs ~8px wider than the frame so the sides are cropped */}
-            <video
-              ref={mVideoRef}
-              src="/assets/Video/Main/morfing.mp4"
-              poster="/assets/Video/Main/morfing.jpg"
-              muted
-              loop
-              playsInline
-              autoPlay
-              preload="auto"
-              className="absolute top-0 h-full"
-              style={{ width: "calc(100% + 16px)", left: "-8px", objectFit: "cover" }}
-            />
+            <div className="flex justify-center">
+              <p className="seif-eyebrow">Creative AI Studio</p>
+            </div>
+            <h1 className="seif-display mt-4" style={{ fontSize: "clamp(2.4rem, 12vw, 3.4rem)" }}>
+              Create Without Limits
+            </h1>
+            <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
+              High end AI generated images and video for brands that want to stand out.
+            </p>
+          </div>
+
+          {/* the film, on top */}
+          <div className="absolute inset-0 flex items-center justify-center px-5">
+            <div
+              ref={mFrameRef}
+              className="relative w-full max-w-[440px] overflow-hidden rounded-2xl"
+              style={{ aspectRatio: "16/9", willChange: "transform, opacity" }}
+            >
+              {/* video runs ~8px wider than the frame so the sides are cropped */}
+              <video
+                ref={mVideoRef}
+                src="/assets/Video/Main/morfing.mp4"
+                poster="/assets/Video/Main/morfing.jpg"
+                muted
+                loop
+                playsInline
+                autoPlay
+                preload="auto"
+                className="absolute top-0 h-full"
+                style={{ width: "calc(100% + 16px)", left: "-8px", objectFit: "cover" }}
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* MOBILE headline, after the film */}
-      <div className="px-6 pb-28 pt-2 text-center md:hidden">
-        <div className="flex justify-center">
-          <p className="seif-eyebrow">Creative AI Studio</p>
-        </div>
-        <h1 className="seif-display mt-4" style={{ fontSize: "clamp(2.4rem, 12vw, 3.4rem)" }}>
-          Create Without Limits
-        </h1>
-        <p className="mx-auto mt-4 max-w-xs text-sm leading-relaxed" style={{ color: "var(--seif-gray-300)" }}>
-          High end AI generated images and video for brands that want to stand out.
-        </p>
       </div>
     </>
   );
