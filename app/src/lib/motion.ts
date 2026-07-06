@@ -12,6 +12,9 @@ let lenis: Lenis | null = null;
 // ScrollTrigger.create crashes at runtime.
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+  // set as early as possible so the browser never natively restores scroll on
+  // a reload (which would fight our own "start at the top" reset).
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 }
 
 export function prefersReducedMotion(): boolean {
@@ -57,6 +60,17 @@ export function scrollToTarget(target: string, immediate = false) {
     lenis.scrollTo(el as HTMLElement, { offset: 0, immediate });
   } else {
     (el as HTMLElement).scrollIntoView({ behavior: immediate ? "auto" : "smooth" });
+  }
+}
+
+// Jump to the very top, THROUGH Lenis so it doesn't animate back to a
+// restored position. Used on a fresh load / refresh with no hash.
+export function scrollToTop() {
+  if (typeof window === "undefined") return;
+  if (lenis) {
+    lenis.scrollTo(0, { immediate: true, force: true });
+  } else {
+    window.scrollTo(0, 0);
   }
 }
 

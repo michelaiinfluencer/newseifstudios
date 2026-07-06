@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { installMotion, scrollToTarget, gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
+import { installMotion, scrollToTarget, scrollToTop, gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
 import { Loader } from "../components/Loader";
 import { Cursor } from "../components/Cursor";
 import { Ambience } from "../components/Ambience";
@@ -25,16 +25,20 @@ function Index() {
   // that section. Jumping THROUGH Lenis keeps it in sync, and the refresh
   // recomputes every scroll-reveal so nothing stays stuck after a nav back.
   useEffect(() => {
-    if (typeof history !== "undefined" && "scrollRestoration" in history) {
-      history.scrollRestoration = "manual";
-    }
     const h = window.location.hash.replace("#", "");
-    const t = setTimeout(() => {
+    // run twice: once quickly, once after Lenis + layout have settled, so a
+    // browser-restored scroll can't leave us parked on a lower section.
+    const jump = () => {
       if (h && document.getElementById(h)) scrollToTarget(`#${h}`, true);
-      else if (window.scrollY > 0) window.scrollTo(0, 0);
+      else scrollToTop();
       ScrollTrigger.refresh();
-    }, 60);
-    return () => clearTimeout(t);
+    };
+    const t1 = setTimeout(jump, 60);
+    const t2 = setTimeout(jump, 350);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   // hero headline build (desktop only): the mobile hero has its own plain,
