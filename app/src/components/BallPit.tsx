@@ -17,6 +17,23 @@ const BALL_IMAGES = [
   "/assets/Image/Avatars/PortfolioAvatarImage2.jpg",
   "/assets/Image/Models/PortfolioModelImage3.jpg",
   "/assets/Image/Lookbooks/PortfolioLookbookImage5.jpg",
+  "/assets/Image/Images/PortfolioImageImage3.jpg",
+  "/assets/Image/Models/PortfolioModelImage4.jpg",
+  "/assets/Image/Lookbooks/PortfolioLookbookImage3.jpg",
+  "/assets/Image/Lookbooks/PortfolioLookbookImage1.jpg",
+  "/assets/Image/UGC/ImageUGC2.jpg",
+  "/assets/Image/Models/PortfolioModelImage2.jpg",
+  "/assets/Image/UGC/ImageUGC3.jpg",
+  "/assets/Image/Lookbooks/PortfolioLookbookImage4.jpg",
+  "/assets/Image/Products/PortfolioProductImage6.jpg",
+  "/assets/Image/Models/PortfolioModelImage5.jpg",
+  "/assets/Image/Products/PortfolioProductImage4.jpg",
+  "/assets/Image/Lookbooks/PortfolioLookbookImage6.jpg",
+  "/assets/Image/UGC/ImageUGC4.jpg",
+  "/assets/Image/Images/PortfolioImageImage4.jpg",
+  "/assets/Image/Avatars/PortfolioAvatarImage3.jpg",
+  "/assets/Image/Products/PortfolioProductImage1.jpg",
+  "/assets/Image/UGC/ImageUGC5.jpg",
 ];
 
 type Ball = {
@@ -262,7 +279,7 @@ export function BallPit() {
       </p>
       <div
         className="seif-pit-frame mt-10"
-        style={{ height: "min(50vh, 460px)" }}
+        style={{ height: "min(90vh, 1200px)" }}
       >
         <canvas
           ref={canvasRef}

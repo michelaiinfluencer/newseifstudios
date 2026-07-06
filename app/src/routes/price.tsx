@@ -293,7 +293,7 @@ function PricePage() {
           style={{ fontSize: "clamp(2.4rem, 7vw, 6rem)", lineHeight: 1.02 }}
           data-reveal="0"
         >
-          Let&rsquo;s Create Something Extraordinary
+          Let&rsquo;s Create Something Special
           <span aria-hidden="true" style={{ color: "var(--seif-red)", textShadow: "0 0 34px rgba(255,0,0,0.65)" }}>
             .
           </span>
