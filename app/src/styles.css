@@ -588,7 +588,7 @@
   transition: opacity 0.25s ease 0.08s;
 }
 .seif-cursor.is-badge .seif-cursor-text { opacity: 1; }
-@media (hover: none), (prefers-reduced-motion: reduce) {
+@media (hover: none), (prefers-reduced-motion: reduce), (max-width: 767px) {
   .seif-cursor { display: none; }
 }
 

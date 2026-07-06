@@ -13,7 +13,9 @@ export function Cursor() {
     const dot = dotRef.current;
     const label = labelRef.current;
     if (!dot || !label) return;
-    if (window.matchMedia("(hover: none)").matches) return;
+    // no custom cursor on touch OR any mobile-width screen (some phones don't
+    // report `hover: none`); the pointer only hurts UX there.
+    if (window.matchMedia("(hover: none), (max-width: 767px)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const x = gsap.quickTo(dot, "x", { duration: 0.22, ease: "power3.out" });
